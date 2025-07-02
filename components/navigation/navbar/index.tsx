@@ -3,7 +3,7 @@ import Link from "next/link";
 import React from "react";
 import Theme from "./Theme";
 
-const NavBar = () => {
+const Navbar = () => {
   return (
     <nav
       className="flex-between background-light900_dark200 
@@ -29,4 +29,4 @@ const NavBar = () => {
   );
 };
 
-export default NavBar;
+export default Navbar;
