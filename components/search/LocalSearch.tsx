@@ -4,7 +4,6 @@ import { Input } from "../ui/input";
 import Image from "next/image";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { formUrlQuery, removeKeysFromUrlQuery } from "@/lib/url";
-import path from "path";
 interface Props {
   route: string;
   imgSrc: string;

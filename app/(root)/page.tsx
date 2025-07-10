@@ -1,4 +1,5 @@
 //import { auth } from "@/auth";
+import HomeFilter from "@/components/filters/homeFilter";
 import LocalSearch from "@/components/search/LocalSearch";
 import { Button } from "@/components/ui/button";
 import Routes from "@/constants/routes";
@@ -30,7 +31,7 @@ const Home = async () => {
           otherClasses="flex-1"
         ></LocalSearch>
       </section>
-      Home Filter
+      <HomeFilter></HomeFilter>
       <div className="flex w-full flex-col gap-6 mt-10">
         <p>Question Card 1</p>
         <p>Question Card 1</p>
