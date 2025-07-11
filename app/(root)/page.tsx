@@ -1,5 +1,6 @@
 //import { auth } from "@/auth";
-import HomeFilter from "@/components/filters/homeFilter";
+import QuesionCard from "@/components/cards/QuestionCard";
+import HomeFilter from "@/components/filters/HomeFilter";
 import LocalSearch from "@/components/search/LocalSearch";
 import { Button } from "@/components/ui/button";
 import Routes from "@/constants/routes";
@@ -33,11 +34,7 @@ const Home = async () => {
       </section>
       <HomeFilter></HomeFilter>
       <div className="flex w-full flex-col gap-6 mt-10">
-        <p>Question Card 1</p>
-        <p>Question Card 1</p>
-        <p>Question Card 1</p>
-        <p>Question Card 1</p>
-        <p>Question Card 1</p>
+        <QuesionCard key={122} question={"Hello There"} />
       </div>
       {/* <form
         className="px-10 pt-[100]"
