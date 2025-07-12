@@ -34,7 +34,9 @@ const Home = async () => {
       </section>
       <HomeFilter></HomeFilter>
       <div className="flex w-full flex-col gap-6 mt-10">
-        <QuesionCard key={122} question={"Hello There"} />
+        {
+          //<QuesionCard key={122} question={"Hello There"} />
+        }
       </div>
       {/* <form
         className="px-10 pt-[100]"
