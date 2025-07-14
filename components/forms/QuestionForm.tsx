@@ -16,6 +16,9 @@ import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import { MDXEditorMethods } from "@mdxeditor/editor";
 import dynamic from "next/dynamic";
+import { fi } from "zod/v4/locales";
+import { z } from "zod";
+import TagCard from "../cards/TagCard";
 
 // This is the only place InitializedMDXEditor is imported directly.
 const Editor = dynamic(() => import("@/components/editor"), {
@@ -25,13 +28,46 @@ const Editor = dynamic(() => import("@/components/editor"), {
 
 const QuestionForm = () => {
   const editorRef = useRef<MDXEditorMethods>(null);
-  const handleCreateQuestion = async (data: any) => {
-    // Handle question creation logic here
-    console.log("Question data:", data);
-    // Simulate a successful submission
-    return { success: true };
+  const handleCreateQuestion = async (
+    data: z.infer<typeof AskQuestionSchema>
+  ) => {
+    console.log(data);
   };
-  const form = useForm({
+  const handleInputKeyDown = (
+    e: React.KeyboardEvent<HTMLInputElement>,
+    field: { value: string[] }
+  ) => {
+    if (e.key === "Enter") {
+      e.preventDefault(); // Prevent form submission on Enter key
+      const tagInput = e.currentTarget.value.trim();
+      if (tagInput && tagInput.length < 15 && !field.value.includes(tagInput)) {
+        form.setValue("tags", [...field.value, tagInput]);
+        e.currentTarget.value = ""; // Clear the input after adding the tag
+        form.clearErrors("tags"); // Clear any previous errors
+      } else if (tagInput.length > 15) {
+        form.setError("tags", {
+          type: "manual",
+          message: "Tag must be less than 15 characters",
+        });
+      } else if (field.value.includes(tagInput)) {
+        form.setError("tags", {
+          type: "manual",
+          message: "Tag already exists",
+        });
+      }
+    }
+  };
+  const handleTagRemove = (tag: string, field: { value: string[] }) => {
+    const newTags = field.value.filter((t) => t !== tag);
+    form.setValue("tags", newTags);
+    if (newTags.length === 0) {
+      form.setError("tags", {
+        type: "manual",
+        message: "Tags are required",
+      });
+    }
+  };
+  const form = useForm<z.infer<typeof AskQuestionSchema>>({
     resolver: zodResolver(AskQuestionSchema),
     defaultValues: {
       title: "",
@@ -99,7 +135,7 @@ const QuestionForm = () => {
           render={({ field }) => (
             <FormItem className="flex w-full flex-col gap-3">
               <FormLabel className="paragraph-semibold text-dark400_light800">
-                Question Title <span className="text-primary-500">*</span>
+                Question Tags <span className="text-primary-500">*</span>
               </FormLabel>
               <FormControl>
                 <div>
@@ -108,9 +144,23 @@ const QuestionForm = () => {
                   light-border-2 text-dark300_light700 no-focus min-h-[56px]
                   border"
                     placeholder="Add tags (e.g. javascript, react)"
-                    {...field}
+                    onKeyDown={(e) => handleInputKeyDown(e, field)}
                   />
-                  Tags
+                  {field.value.length > 0 && (
+                    <div className="flex-start mt-2.5 flex-wrap gap-2.5">
+                      {field.value.map((tag: string) => (
+                        <TagCard
+                          key={tag}
+                          name={tag}
+                          _id={tag}
+                          compact
+                          remove
+                          isButton
+                          handleTagRemove={() => handleTagRemove(tag, field)}
+                        />
+                      ))}
+                    </div>
+                  )}
                 </div>
               </FormControl>
               <FormDescription className="body-regular text-light-500 mt-2.5">

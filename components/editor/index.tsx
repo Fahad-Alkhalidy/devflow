@@ -48,7 +48,7 @@ const Editor = ({ value, fieldChange, editorRef, ...props }: Props) => {
     <MDXEditor
       key={resolvedTheme}
       markdown={value}
-      className="background-light800_dark200 light-border-2 dark-editor markdown-editor w-full border"
+      className="background-light800_dark200 grid light-border-2 dark-editor markdown-editor w-full border"
       onChange={fieldChange}
       ref={editorRef}
       plugins={[
