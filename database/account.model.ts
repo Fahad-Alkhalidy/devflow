@@ -1,6 +1,6 @@
-import { model, models, Schema, Types } from "mongoose";
+import { model, models, Schema, Types, Document } from "mongoose";
 
-interface IAccount {
+export interface IAccount {
   userId: Types.ObjectId; // Reference to User ID
   name: string;
   password?: string; // Optional for OAuth accounts
@@ -8,6 +8,8 @@ interface IAccount {
   provider: string; // e.g., 'email', 'google', 'github'
   providerAccountId: string; // Unique ID from the auth provider
 }
+
+export interface IAccountDocument extends IAccount, Document {}
 
 const AccountSchema = new Schema(
   {
