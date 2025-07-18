@@ -5,12 +5,14 @@ import LocalSearch from "@/components/search/LocalSearch";
 import { Button } from "@/components/ui/button";
 import Routes from "@/constants/routes";
 import handleError from "@/lib/handlers/error";
+import dbConnect from "@/lib/mongoose";
 import Link from "next/link";
 import React from "react";
 
 const Home = async () => {
   //const session = await auth();
   //console.log(session);
+
   return (
     <>
       <section
