@@ -1,4 +1,5 @@
 //import { auth } from "@/auth";
+import { auth } from "@/auth";
 import QuesionCard from "@/components/cards/QuestionCard";
 import HomeFilter from "@/components/filters/HomeFilter";
 import LocalSearch from "@/components/search/LocalSearch";
@@ -10,8 +11,8 @@ import Link from "next/link";
 import React from "react";
 
 const Home = async () => {
-  //const session = await auth();
-  //console.log(session);
+  const session = await auth();
+  console.log(session);
 
   return (
     <>
