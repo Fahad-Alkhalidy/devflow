@@ -25,14 +25,14 @@ async function action<T>({
         return new ValidationError(
           error.flatten().fieldErrors as Record<string, string[]>
         );
-      return new Error("Schema validation failed");
+      else return new Error("Schema validation failed");
     }
   }
   let session: Session | null = null;
   if (authorize) {
     session = await auth();
+    if (!session) return new UnauthorizedError();
   }
-  if (!session) return new UnauthorizedError();
   await dbConnect();
   return { params, session }; //Passed: Validation | Authentication | Connected to DB
 }
