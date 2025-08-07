@@ -16,7 +16,7 @@ const LeftSidebar = async () => {
      overflow-y-auto border-r p-6 pt-36 shadow-light-300 
      dark:shadow-none max-sm:hidden lg:w-[266px]"
     >
-      <div className="flex flex-1 flex-col gap-6">
+      <div className="flex flex-1 flex-col gap-6 mb-[30px]">
         <NavLinks userId={userId}></NavLinks>
       </div>
       <div className="flex flex-col gap-3">

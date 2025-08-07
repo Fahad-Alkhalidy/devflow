@@ -1,7 +1,7 @@
 "use client";
 import { AskQuestionSchema } from "@/lib/validations";
 import { zodResolver } from "@hookform/resolvers/zod";
-import React, { useRef } from "react";
+import React, { useRef, useTransition } from "react";
 import { useForm } from "react-hook-form";
 import {
   Form,
@@ -19,7 +19,11 @@ import dynamic from "next/dynamic";
 import { fi } from "zod/v4/locales";
 import { z } from "zod";
 import TagCard from "../cards/TagCard";
-
+import { createQuestion } from "@/lib/actions/question.action";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
+import Routes from "@/constants/routes";
+import { ReloadIcon } from "@radix-ui/react-icons";
 // This is the only place InitializedMDXEditor is imported directly.
 const Editor = dynamic(() => import("@/components/editor"), {
   // Make sure we turn SSR off
@@ -27,11 +31,36 @@ const Editor = dynamic(() => import("@/components/editor"), {
 });
 
 const QuestionForm = () => {
+  const router = useRouter();
+  const [isPending, startTransition] = useTransition();
   const editorRef = useRef<MDXEditorMethods>(null);
   const handleCreateQuestion = async (
     data: z.infer<typeof AskQuestionSchema>
   ) => {
-    console.log(data);
+    startTransition(async () => {
+      const result = await createQuestion(data);
+      if (result?.success) {
+        toast.success("Created Question Successfully!", {
+          description: "You have created a new question.",
+          style: {
+            backgroundColor: "#f8d7da",
+            color: "#721c24",
+            border: "1px solid #f5c6cb",
+          },
+        });
+        if (result.data) router.push(Routes.QUESTION(result.data?._id));
+      } else {
+        toast.error("Failed To Create A Question!", {
+          description: "Question failed to be created.",
+
+          style: {
+            backgroundColor: "#f8d7da",
+            color: "#721c24",
+            border: "1px solid #f5c6cb",
+          },
+        });
+      }
+    });
   };
   const handleInputKeyDown = (
     e: React.KeyboardEvent<HTMLInputElement>,
@@ -173,10 +202,18 @@ const QuestionForm = () => {
         />
         <div className="mt-16 flex justify-end">
           <Button
+            disabled={isPending}
             type="submit"
             className="primary-gradient !text-light-900 w-fit"
           >
-            Ask a Question
+            {isPending ? (
+              <>
+                <ReloadIcon className="mr-2 size-4 animate-spin" />
+                <span>Submitting</span>
+              </>
+            ) : (
+              <p>Ask a Question</p>
+            )}
           </Button>
         </div>
       </form>

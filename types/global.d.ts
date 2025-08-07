@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 
-interface Question {
+interface IQuestion {
   _id: string;
   title: string;
   tags: Tag[];
@@ -31,6 +31,11 @@ type ActionResponse<T = null> = {
   };
   status?: number;
 };
+
+interface RouteParams {
+  params: Promise<Record<string, string>>;
+  searchParams: Promise<Record<string, string>>;
+}
 
 type SuccessResponse<T = null> = ActionRespons<T> & { success: true };
 type ErrorResponse = ActionResponse<undefined> & { success: false };
