@@ -61,9 +61,9 @@ const AuthForm = <T extends FieldValues>({
               ? "Signed in successfully!"
               : "Signed up successfully!",
           style: {
-            backgroundColor: "#f8d7da",
-            color: "#721c24",
-            border: "1px solid #f5c6cb",
+            backgroundColor: "#d4edda",
+            color: "#155724",
+            border: "1px solid #c3e6cb",
           },
         }
       );

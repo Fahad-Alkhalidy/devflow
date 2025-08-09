@@ -19,18 +19,24 @@ import dynamic from "next/dynamic";
 import { fi } from "zod/v4/locales";
 import { z } from "zod";
 import TagCard from "../cards/TagCard";
-import { createQuestion } from "@/lib/actions/question.action";
+import { createQuestion, editQuestion } from "@/lib/actions/question.action";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import Routes from "@/constants/routes";
 import { ReloadIcon } from "@radix-ui/react-icons";
+import { IQuestion } from "@/types/global";
 // This is the only place InitializedMDXEditor is imported directly.
 const Editor = dynamic(() => import("@/components/editor"), {
   // Make sure we turn SSR off
   ssr: false,
 });
 
-const QuestionForm = () => {
+interface Params {
+  question?: IQuestion;
+  isEdit?: boolean;
+}
+
+const QuestionForm = ({ question, isEdit = false }: Params) => {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const editorRef = useRef<MDXEditorMethods>(null);
@@ -38,21 +44,49 @@ const QuestionForm = () => {
     data: z.infer<typeof AskQuestionSchema>
   ) => {
     startTransition(async () => {
+      if (isEdit && question) {
+        const result = await editQuestion({
+          questionId: question?._id,
+          ...data,
+        });
+        if (result?.success) {
+          toast.success("Question Updated Successfully!", {
+            description: "You have updated the question.",
+            style: {
+              backgroundColor: "#d4edda",
+              color: "#155724",
+              border: "1px solid #c3e6cb",
+            },
+          });
+          if (result.data) router.push(Routes.QUESTION(result.data?._id));
+        } else {
+          console.log(result);
+          toast.error("Failed To Update The Question!", {
+            description: "Question failed to be updated.",
+            style: {
+              backgroundColor: "#f8d7da",
+              color: "#721c24",
+              border: "1px solid #f5c6cb",
+            },
+          });
+        }
+
+        return;
+      }
       const result = await createQuestion(data);
       if (result?.success) {
         toast.success("Created Question Successfully!", {
           description: "You have created a new question.",
           style: {
-            backgroundColor: "#f8d7da",
-            color: "#721c24",
-            border: "1px solid #f5c6cb",
+            backgroundColor: "#d4edda",
+            color: "#155724",
+            border: "1px solid #c3e6cb",
           },
         });
         if (result.data) router.push(Routes.QUESTION(result.data?._id));
       } else {
         toast.error("Failed To Create A Question!", {
           description: "Question failed to be created.",
-
           style: {
             backgroundColor: "#f8d7da",
             color: "#721c24",
@@ -99,9 +133,9 @@ const QuestionForm = () => {
   const form = useForm<z.infer<typeof AskQuestionSchema>>({
     resolver: zodResolver(AskQuestionSchema),
     defaultValues: {
-      title: "",
-      content: "",
-      tags: [],
+      title: question?.title || "",
+      content: question?.content || "",
+      tags: question?.tags.map((tag) => tag.name) || [],
     },
   });
   return (
@@ -212,7 +246,7 @@ const QuestionForm = () => {
                 <span>Submitting</span>
               </>
             ) : (
-              <p>Ask a Question</p>
+              <p>{isEdit ? "Edit" : "Ask a Question"}</p>
             )}
           </Button>
         </div>
