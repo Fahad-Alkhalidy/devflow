@@ -5,15 +5,26 @@ import HomeFilter from "@/components/filters/HomeFilter";
 import LocalSearch from "@/components/search/LocalSearch";
 import { Button } from "@/components/ui/button";
 import Routes from "@/constants/routes";
+import { getQuestions } from "@/lib/actions/question.action";
 import handleError from "@/lib/handlers/error";
 import dbConnect from "@/lib/mongoose";
+import { get } from "http";
 import Link from "next/link";
 import React from "react";
 
-const Home = async () => {
-  const session = await auth();
-  console.log(session);
+interface SearchParams {
+  searchParams: Promise<{ [key: string]: string }>;
+}
 
+const Home = async ({ searchParams }: SearchParams) => {
+  const { page, pageSize, filter, query } = await searchParams;
+  const { success, data, error } = await getQuestions({
+    page: Number(page) || 1,
+    pageSize: Number(pageSize) || 10,
+    filter: filter || "",
+    query: query || "",
+  });
+  const { questions } = data || {};
   return (
     <>
       <section
@@ -36,7 +47,26 @@ const Home = async () => {
           otherClasses="flex-1"
         ></LocalSearch>
       </section>
-      <HomeFilter></HomeFilter>
+      <HomeFilter />
+      {success ? (
+        <div className="mt-10 flex w-full flex-col gap-6">
+          {questions && questions.length > 0 ? (
+            questions.map((question) => (
+              <QuesionCard key={question._id} question={question} />
+            ))
+          ) : (
+            <div className="mt-10 flex w-full items-center justify-center">
+              <p className="text-dark400_light700">No Question Found</p>
+            </div>
+          )}
+        </div>
+      ) : (
+        <div className="mt-10 flex w-full items-center justify-center">
+          <p className="text-dark400_light700">
+            {error?.message || "Failed to fetch questions"}
+          </p>
+        </div>
+      )}
       <div className="flex w-full flex-col gap-6 mt-10">
         {
           //<QuesionCard key={122} question={"Hello There"} />

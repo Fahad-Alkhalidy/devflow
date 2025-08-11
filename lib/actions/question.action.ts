@@ -1,17 +1,24 @@
 "use server";
 
-import { ActionResponse, ErrorResponse, IQuestion } from "@/types/global";
+import {
+  ActionResponse,
+  ErrorResponse,
+  IQuestion,
+  PaginatedSearchParams,
+} from "@/types/global";
 import {
   AskQuestionSchema,
   EditQuestionSchema,
   GetQuestionSchema,
+  PaginatedSearchParamsSchema,
 } from "../validations";
 import action from "../handlers/action";
 import handleError from "../handlers/error";
-import mongoose from "mongoose";
-import Question from "@/database/question.model";
+import mongoose, { FilterQuery } from "mongoose";
+import Question, { IQuestionDocument } from "@/database/question.model";
 import Tag, { ITagDocument } from "@/database/tag.model";
 import TagQuestion from "@/database/tag-question";
+import { de } from "zod/v4/locales";
 
 export async function createQuestion(
   params: CreateQuestionParams
@@ -78,7 +85,7 @@ export async function createQuestion(
 
 export async function editQuestion(
   params: EditQuestionParams
-): Promise<ActionResponse<IQuestion>> {
+): Promise<ActionResponse<IQuestionDocument>> {
   const validationResult = await action({
     params,
     schema: EditQuestionSchema,
@@ -102,18 +109,25 @@ export async function editQuestion(
       question.content = content;
       await question.save({ session });
     }
+
+    //the questions.tags is an array of ObjectId, while tags is an array of strings
+    //so we use some methods to compare and update the tags
     const tagsToAdd = tags.filter(
-      (tag) => !question.tags.includes(tag.toLowerCase())
+      (tag) =>
+        !question.tags.some((t: ITagDocument) =>
+          t.name.toLowerCase().includes(tag.toLowerCase())
+        )
     );
     const tagsToRemove = question.tags.filter(
-      (tag: ITagDocument) => !tags.includes(tag.name.toLowerCase())
+      (tag: ITagDocument) =>
+        !tags.some((t: string) => t.toLowerCase() === tag.name.toLowerCase())
     );
     const newTagDocuments = [];
     if (tagsToAdd.length > 0) {
       for (const tag of tagsToAdd) {
         const existingTag = await Tag.findOneAndUpdate(
           {
-            name: { $regex: new RegExp(`^${tag}$`, "i") },
+            name: { $regex: `^${tag}$`, $Options: "i" },
           },
           { $setOnInsert: { name: tag }, $inc: { questions: 1 } },
           { upsert: true, new: true, session }
@@ -142,7 +156,10 @@ export async function editQuestion(
         { session }
       );
       question.tags = question.tags.filter(
-        (tagId: mongoose.Types.ObjectId) => !tagIdsToRemove.includes(tagId)
+        (tag: mongoose.Types.ObjectId) =>
+          !tagIdsToRemove.some((id: mongoose.Types.ObjectId) =>
+            id.equals(tag._id)
+          )
       );
     }
     if (newTagDocuments.length > 0) {
@@ -191,5 +208,81 @@ export async function getQuestion(
   }
 }
 
+export async function getQuestions(
+  params: PaginatedSearchParams
+): Promise<ActionResponse<{ questions: IQuestion[]; isNext: boolean }>> {
+  const validationResult = await action({
+    params,
+    schema: PaginatedSearchParamsSchema,
+  });
+  if (validationResult instanceof Error) {
+    return handleError(validationResult) as ErrorResponse;
+  }
+  const {
+    page = 1,
+    pageSize = 10,
+    query,
+    filter,
+    sort,
+  } = validationResult.params!;
+  const skip = (Number(page) - 1) * pageSize;
+  const limit = Number(pageSize);
+  const filterQuery: FilterQuery<typeof Question> = {};
+
+  if (filter === "recommended") {
+    return {
+      success: true,
+      data: {
+        questions: [],
+        isNext: false,
+      },
+    };
+  }
+
+  if (query) {
+    //$or operator allows for multiple conditions to be checked
+    filterQuery.$or = [
+      { title: { $regex: new RegExp(query, "i") } }, //"i" for case-insensitive search
+      { content: { $regex: new RegExp(query, "i") } },
+    ];
+  }
+
+  let sortCriteria = {};
+  switch (filter) {
+    case "newest":
+      sortCriteria = { createdAt: -1 };
+      break;
+    case "unanswered":
+      filterQuery.answers = 0;
+      sortCriteria = { createdAt: -1 };
+      break;
+    case "popular":
+      sortCriteria = { upvotes: -1 };
+      break;
+    default:
+      sortCriteria = { createdAt: -1 };
+  }
+  try {
+    const totalQuestions = await Question.countDocuments(filterQuery);
+    const questions = await Question.find(filterQuery)
+      .populate("tags", "name")
+      .populate("author", "name image")
+      .lean() // will convert Mongoose documents to plain JavaScript objects
+      .sort(sortCriteria)
+      .skip(skip)
+      .limit(limit);
+
+    const isNext = totalQuestions > skip + questions.length; // Check if there are more questions to fetch
+    return {
+      success: true,
+      data: {
+        questions: JSON.parse(JSON.stringify(questions)), // We do this to ensure the data is serializable
+        isNext,
+      },
+    };
+  } catch (error) {
+    return handleError(error) as ErrorResponse;
+  }
+}
 //In Server Components, server actions are not converted to POST requests.
 // In Client Components, server actions are converted to POST requests, Because it is not executed on the server.

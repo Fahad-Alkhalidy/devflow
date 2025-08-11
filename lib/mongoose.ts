@@ -1,6 +1,6 @@
 import mongoose, { Mongoose } from "mongoose";
 import logger from "./logger";
-
+import "@/database"; // Ensure the database models are loaded
 const MONGODB_URI = process.env.MONGODB_URI as string;
 
 if (!MONGODB_URI) {

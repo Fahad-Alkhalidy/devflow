@@ -4,9 +4,10 @@ import Link from "next/link";
 import React from "react";
 import TagCard from "./TagCard";
 import Metric from "../Metric";
+import { IQuestion, Tag } from "@/types/global";
 
 interface Props {
-  question: Question;
+  question: IQuestion;
 }
 
 const QuestionCard = ({
@@ -48,21 +49,21 @@ const QuestionCard = ({
         ></Metric>
         <div className="flex items-center gap-3 max-sm:flex-wrap max-sm:justify-start">
           <Metric
-            imgUrl="/icon/like.svg"
+            imgUrl="/icons/like.svg"
             alt="like"
             value={upvotes}
             title="Votes"
             textStyles="small-medium text-dark400_light800"
           ></Metric>
           <Metric
-            imgUrl="/icon/message.svg"
+            imgUrl="/icons/message.svg"
             alt="answers"
             value={answers}
             title="Answers"
             textStyles="small-medium text-dark400_light800"
           ></Metric>
           <Metric
-            imgUrl="/icon/eye.svg"
+            imgUrl="/icons/eye.svg"
             alt="views"
             value={views}
             title="Views"
