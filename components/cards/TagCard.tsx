@@ -59,7 +59,7 @@ const TagCard = ({
         {content}
       </button>
     ) : (
-      <Link href={Routes.TAGS(_id)} className="flex justify-between pag-2">
+      <Link href={Routes.TAG(_id)} className="flex justify-between pag-2">
         {content}
       </Link>
     );
