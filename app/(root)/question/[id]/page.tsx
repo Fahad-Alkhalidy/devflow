@@ -10,6 +10,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { title } from "process";
 import React from "react";
+import View from "../views";
 
 const QuestionDetails = async ({ params }: RouteParams) => {
   const { id } = await params;
@@ -21,6 +22,7 @@ const QuestionDetails = async ({ params }: RouteParams) => {
 
   return (
     <>
+      <View questionId={question._id}></View>
       <div className="flex-start w-full flex-col">
         <div className="flex w-full flex-col-reverse justify-between">
           <div className="flex items-center justify-start gap-1">
