@@ -3,7 +3,7 @@ import { Preview } from "@/components/editor/preview";
 import Metric from "@/components/Metric";
 import UserAvatar from "@/components/UserAvatar";
 import ROUTES from "@/constants/routes";
-import { getQuestion } from "@/lib/actions/question.action";
+import { getQuestion, incrementViews } from "@/lib/actions/question.action";
 import { formatNumber, getTimeStamp } from "@/lib/utils";
 import { RouteParams, Tag } from "@/types/global";
 import Link from "next/link";
@@ -14,15 +14,18 @@ import View from "../views";
 
 const QuestionDetails = async ({ params }: RouteParams) => {
   const { id } = await params;
-  const { success, data: question } = await getQuestion({ questionId: id });
-
+  //you cannot use parallel requestions if they depend on each other
+  const [_, { success, data: question }] = await Promise.all([
+    await incrementViews({ questionId: id }),
+    await getQuestion({ questionId: id }),
+  ]);
   if (!success || !question) return redirect("/404");
 
   const { author, createdAt, answers, views, tags, content, title } = question;
 
   return (
     <>
-      <View questionId={question._id}></View>
+      {/*<View questionId={question._id}></View>*/}
       <div className="flex-start w-full flex-col">
         <div className="flex w-full flex-col-reverse justify-between">
           <div className="flex items-center justify-start gap-1">
