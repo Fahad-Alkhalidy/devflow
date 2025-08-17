@@ -1,5 +1,8 @@
 "use client";
 
+//not being used in the current codebase, but can be used later, only for the first approach
+//of incrementing the views
+
 import { toast } from "sonner";
 import { incrementViews } from "@/lib/actions/question.action";
 import { useEffect } from "react";
