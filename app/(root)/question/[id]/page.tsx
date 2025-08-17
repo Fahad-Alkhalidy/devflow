@@ -11,14 +11,16 @@ import { redirect } from "next/navigation";
 import { title } from "process";
 import React from "react";
 import View from "../views";
+import { after } from "next/server";
 
 const QuestionDetails = async ({ params }: RouteParams) => {
   const { id } = await params;
-  //you cannot use parallel requestions if they depend on each other
-  const [_, { success, data: question }] = await Promise.all([
-    await incrementViews({ questionId: id }),
-    await getQuestion({ questionId: id }),
-  ]);
+  const { success, data: question } = await getQuestion({ questionId: id });
+
+  //this will only be called once when the component mounts and finishes rendering
+  after(async () => {
+    await incrementViews({ questionId: id });
+  });
   if (!success || !question) return redirect("/404");
 
   const { author, createdAt, answers, views, tags, content, title } = question;
