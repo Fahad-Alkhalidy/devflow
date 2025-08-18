@@ -24,7 +24,8 @@ import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import Routes from "@/constants/routes";
 import { ReloadIcon } from "@radix-ui/react-icons";
-import { IQuestion } from "@/types/global";
+import { ActionResponse, IQuestion } from "@/types/global";
+import { IQuestionDocument } from "@/database/question.model";
 // This is the only place InitializedMDXEditor is imported directly.
 const Editor = dynamic(() => import("@/components/editor"), {
   // Make sure we turn SSR off
@@ -49,7 +50,7 @@ const QuestionForm = ({ question, isEdit = false }: Params) => {
           questionId: question?._id,
           ...data,
         });
-        if (result?.success) {
+        if (result.success) {
           toast.success("Question Updated Successfully!", {
             description: "You have updated the question.",
             style: {
@@ -58,7 +59,8 @@ const QuestionForm = ({ question, isEdit = false }: Params) => {
               border: "1px solid #c3e6cb",
             },
           });
-          if (result.data) router.push(Routes.QUESTION(result.data?._id));
+          if (result.data)
+            router.push(Routes.QUESTION(result.data._id as string));
         } else {
           console.log(result);
           toast.error("Failed To Update The Question!", {
@@ -219,7 +221,7 @@ const QuestionForm = ({ question, isEdit = false }: Params) => {
                           compact
                           remove
                           isButton
-                          handleTagRemove={() => handleTagRemove(tag, field)}
+                          handleRemove={() => handleTagRemove(tag, field)}
                         />
                       ))}
                     </div>

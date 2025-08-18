@@ -5,7 +5,7 @@ import { MDXEditorMethods } from "@mdxeditor/editor";
 import { ReloadIcon } from "@radix-ui/react-icons";
 import dynamic from "next/dynamic";
 import Image from "next/image";
-import { useRef, useState } from "react";
+import { useRef, useState, useTransition } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
@@ -17,15 +17,21 @@ import {
   FormItem,
   FormMessage,
 } from "@/components/ui/form";
+import { toast } from "sonner";
 import { AnswerSchema } from "@/lib/validations";
+import { useRouter } from "next/navigation";
+import Routes from "@/constants/routes";
+import { createAnswer } from "@/lib/actions/answer.action";
 
 const Editor = dynamic(() => import("@/components/editor"), {
   ssr: false,
 });
 
-const AnswerForm = () => {
-  const [isSubmitting, setIsSubmitting] = useState(false);
+const AnswerForm = ({ questionId }: { questionId: string }) => {
+  const [isAnswering, startAnsweringTransition] = useTransition();
   const [isAISubmitting, setIsAISubmitting] = useState(false);
+
+  const router = useRouter();
 
   const editorRef = useRef<MDXEditorMethods>(null);
 
@@ -37,7 +43,35 @@ const AnswerForm = () => {
   });
 
   const handleSubmit = async (values: z.infer<typeof AnswerSchema>) => {
-    console.log(values);
+    startAnsweringTransition(async () => {
+      const result = await createAnswer({
+        questionId,
+        content: values.content,
+      });
+
+      if (result?.success) {
+        form.reset();
+        toast.success("Created Question Successfully!", {
+          description: "You have created a new question.",
+          style: {
+            backgroundColor: "#d4edda",
+            color: "#155724",
+            border: "1px solid #c3e6cb",
+          },
+        });
+        if (result.data)
+          router.push(Routes.QUESTION(result.data?._id as string));
+      } else {
+        toast.error("Failed To Create A Question!", {
+          description: "Question failed to be created.",
+          style: {
+            backgroundColor: "#f8d7da",
+            color: "#721c24",
+            border: "1px solid #f5c6cb",
+          },
+        });
+      }
+    });
   };
 
   return (
@@ -79,7 +113,7 @@ const AnswerForm = () => {
             name="content"
             render={({ field }) => (
               <FormItem className="flex w-full flex-col gap-3">
-                <FormControl>
+                <FormControl className="mt-3.5">
                   <Editor
                     value={field.value}
                     editorRef={editorRef}
@@ -93,7 +127,7 @@ const AnswerForm = () => {
 
           <div className="flex justify-end">
             <Button type="submit" className="primary-gradient w-fit">
-              {isSubmitting ? (
+              {isAnswering ? (
                 <>
                   <ReloadIcon className="mr-2 size-4 animate-spin" />
                   Posting...
