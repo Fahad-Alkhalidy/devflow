@@ -13,6 +13,7 @@ import {
   Tag as ITag,
   IQuestion,
 } from "@/types/global";
+import { GetTagQuestionsParams } from "@/types/action";
 
 export const getTags = async (
   params: PaginatedSearchParams

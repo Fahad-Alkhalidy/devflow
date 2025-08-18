@@ -22,6 +22,12 @@ import TagQuestion from "@/database/tag-question";
 import { de } from "zod/v4/locales";
 import { revalidatePath } from "next/cache";
 import Routes from "@/constants/routes";
+import {
+  CreateQuestionParams,
+  EditQuestionParams,
+  GetQuestionParams,
+  IncrementViewsParams,
+} from "@/types/action";
 
 export async function createQuestion(
   params: CreateQuestionParams
