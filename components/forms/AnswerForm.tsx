@@ -5,6 +5,7 @@ import { MDXEditorMethods } from "@mdxeditor/editor";
 import { ReloadIcon } from "@radix-ui/react-icons";
 import dynamic from "next/dynamic";
 import Image from "next/image";
+import { useSession } from "next-auth/react";
 import { useRef, useState, useTransition } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -18,20 +19,24 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { toast } from "sonner";
-import { AnswerSchema } from "@/lib/validations";
-import { useRouter } from "next/navigation";
-import Routes from "@/constants/routes";
 import { createAnswer } from "@/lib/actions/answer.action";
+import { api } from "@/lib/api";
+import { AnswerSchema } from "@/lib/validations";
 
 const Editor = dynamic(() => import("@/components/editor"), {
   ssr: false,
 });
 
-const AnswerForm = ({ questionId }: { questionId: string }) => {
+interface Props {
+  questionId: string;
+  questionTitle: string;
+  questionContent: string;
+}
+
+const AnswerForm = ({ questionId, questionTitle, questionContent }: Props) => {
   const [isAnswering, startAnsweringTransition] = useTransition();
   const [isAISubmitting, setIsAISubmitting] = useState(false);
-
-  const router = useRouter();
+  const session = useSession();
 
   const editorRef = useRef<MDXEditorMethods>(null);
 
@@ -49,8 +54,9 @@ const AnswerForm = ({ questionId }: { questionId: string }) => {
         content: values.content,
       });
 
-      if (result?.success) {
+      if (result.success) {
         form.reset();
+
         toast.success("Created Question Successfully!", {
           description: "You have created a new question.",
           style: {
@@ -59,8 +65,10 @@ const AnswerForm = ({ questionId }: { questionId: string }) => {
             border: "1px solid #c3e6cb",
           },
         });
-        if (result.data)
-          router.push(Routes.QUESTION(result.data?._id as string));
+
+        if (editorRef.current) {
+          editorRef.current.setMarkdown("");
+        }
       } else {
         toast.error("Failed To Create A Question!", {
           description: "Question failed to be created.",
@@ -74,6 +82,71 @@ const AnswerForm = ({ questionId }: { questionId: string }) => {
     });
   };
 
+  const generateAIAnswer = async () => {
+    if (session.status !== "authenticated") {
+      return toast.error("You are not logged in", {
+        description: "You must be logged in to use this feature.",
+        style: {
+          backgroundColor: "#f8d7da",
+          color: "#721c24",
+          border: "1px solid #f5c6cb",
+        },
+      });
+    }
+
+    setIsAISubmitting(true);
+
+    try {
+      const { success, data, error } = await api.ai.getAnswer(
+        questionTitle,
+        questionContent
+      );
+
+      if (!success) {
+        return toast.error("Failed to generate an answer", {
+          description: "Groq failed to generate an answer.",
+          style: {
+            backgroundColor: "#f8d7da",
+            color: "#721c24",
+            border: "1px solid #f5c6cb",
+          },
+        });
+      }
+
+      const formattedAnswer = data.replace(/<br>/g, " ").toString().trim();
+      console.log(editorRef.current);
+      if (editorRef.current) {
+        editorRef.current.setMarkdown(formattedAnswer);
+
+        form.setValue("content", formattedAnswer);
+        form.trigger("content");
+      }
+
+      toast.success("Answered generated successfully", {
+        description: "Groq has generated an answer for you.",
+        style: {
+          backgroundColor: "#d4edda",
+          color: "#155724",
+          border: "1px solid #c3e6cb",
+        },
+      });
+    } catch (error) {
+      toast.error("Something went wrong", {
+        description:
+          error instanceof Error
+            ? error.message
+            : "Failed to generate an answer.",
+        style: {
+          backgroundColor: "#f8d7da",
+          color: "#721c24",
+          border: "1px solid #f5c6cb",
+        },
+      });
+    } finally {
+      setIsAISubmitting(false);
+    }
+  };
+
   return (
     <div>
       <div className="flex flex-col justify-between gap-5 sm:flex-row sm:items-center sm:gap-2">
@@ -83,6 +156,7 @@ const AnswerForm = ({ questionId }: { questionId: string }) => {
         <Button
           className="btn light-border-2 gap-1.5 rounded-md border px-4 py-2.5 text-primary-500 shadow-none dark:text-primary-500"
           disabled={isAISubmitting}
+          onClick={generateAIAnswer}
         >
           {isAISubmitting ? (
             <>
@@ -116,7 +190,7 @@ const AnswerForm = ({ questionId }: { questionId: string }) => {
                 <FormControl>
                   <Editor
                     value={field.value}
-                    editorRef={editorRef}
+                    ref={editorRef}
                     fieldChange={field.onChange}
                   />
                 </FormControl>

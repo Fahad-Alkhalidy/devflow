@@ -1,12 +1,6 @@
 "use server";
 
 import {
-  ActionResponse,
-  ErrorResponse,
-  IQuestion,
-  PaginatedSearchParams,
-} from "@/types/global";
-import {
   AskQuestionSchema,
   EditQuestionSchema,
   GetQuestionSchema,
@@ -22,16 +16,10 @@ import TagQuestion from "@/database/tag-question";
 import { de } from "zod/v4/locales";
 import { revalidatePath } from "next/cache";
 import Routes from "@/constants/routes";
-import {
-  CreateQuestionParams,
-  EditQuestionParams,
-  GetQuestionParams,
-  IncrementViewsParams,
-} from "@/types/action";
 
 export async function createQuestion(
   params: CreateQuestionParams
-): Promise<ActionResponse<IQuestion>> {
+): Promise<ActionResponse<Question>> {
   const validationResult = await action({
     params,
     schema: AskQuestionSchema,
@@ -191,7 +179,7 @@ export async function editQuestion(
 
 export async function getQuestion(
   params: GetQuestionParams
-): Promise<ActionResponse<IQuestion>> {
+): Promise<ActionResponse<Question>> {
   const validationResult = await action({
     params,
     schema: GetQuestionSchema,
@@ -221,7 +209,7 @@ export async function getQuestion(
 
 export async function getQuestions(
   params: PaginatedSearchParams
-): Promise<ActionResponse<{ questions: IQuestion[]; isNext: boolean }>> {
+): Promise<ActionResponse<{ questions: Question[]; isNext: boolean }>> {
   const validationResult = await action({
     params,
     schema: PaginatedSearchParamsSchema,

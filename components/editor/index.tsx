@@ -35,109 +35,111 @@ import { basicDark } from "cm6-theme-basic-dark";
 import "./dark-editor.css"; // Import dark editor styles
 import { useTheme } from "next-themes";
 
+import React, { forwardRef } from "react";
+
 interface Props {
   value: string;
   fieldChange: (value: string) => void;
-  editorRef: ForwardedRef<MDXEditorMethods> | null;
 }
 
-const Editor = ({ value, fieldChange, editorRef, ...props }: Props) => {
-  const { resolvedTheme } = useTheme();
-  const theme = resolvedTheme === "dark" ? [basicDark] : [];
-  return (
-    <MDXEditor
-      key={resolvedTheme}
-      markdown={value}
-      className="background-light800_dark200 grid light-border-2 dark-editor markdown-editor w-full border"
-      onChange={fieldChange}
-      ref={editorRef}
-      plugins={[
-        // Example Plugin Usage
-        headingsPlugin(),
-        listsPlugin(),
-        linkPlugin(),
-        linkDialogPlugin(),
-        quotePlugin(),
-        thematicBreakPlugin(),
-        markdownShortcutPlugin(),
-        tablePlugin(),
-        imagePlugin(),
-        codeBlockPlugin({ defaultCodeBlockLanguage: "" }),
-        codeMirrorPlugin({
-          codeBlockLanguages: {
-            css: "css",
-            txt: "txt",
-            sql: "sql",
-            json: "json",
-            html: "html",
-            js: "javascript",
-            ts: "typescript",
-            "": "unspecified",
-            jsx: "Javascript (React)",
-            tsx: "Typescript (React)",
-            python: "python",
-            java: "java",
-            csharp: "csharp",
-            cpp: "cpp",
-            go: "go",
-            sass: "sass",
-            scss: "scss",
-            less: "less",
-            bash: "bash",
-            php: "php",
-            ruby: "ruby",
-            rust: "rust",
-            kotlin: "kotlin",
-            swift: "swift",
-            yaml: "yaml",
-            xml: "xml",
-            markdown: "markdown",
-          },
-          autoLoadLanguageSupport: true,
-          codeMirrorExtensions: theme,
-        }),
-        diffSourcePlugin({ viewMode: "rich-text", diffMarkdown: "" }),
-        toolbarPlugin({
-          toolbarContents: () => (
-            <ConditionalContents
-              options={[
-                {
-                  when: (editor) => editor?.editorType === "codeblock",
-                  contents: () => <ChangeCodeMirrorLanguage />,
-                },
-                {
-                  fallback: () => (
-                    <>
-                      <UndoRedo />
-                      <Separator />
+const Editor = forwardRef<MDXEditorMethods, Props>(
+  ({ value, fieldChange, ...props }, ref) => {
+    const { resolvedTheme } = useTheme();
+    const theme = resolvedTheme === "dark" ? [basicDark] : [];
+    return (
+      <MDXEditor
+        key={resolvedTheme}
+        markdown={value}
+        className="background-light800_dark200 grid light-border-2 dark-editor markdown-editor w-full border"
+        onChange={fieldChange}
+        ref={ref}
+        plugins={[
+          headingsPlugin(),
+          listsPlugin(),
+          linkPlugin(),
+          linkDialogPlugin(),
+          quotePlugin(),
+          thematicBreakPlugin(),
+          markdownShortcutPlugin(),
+          tablePlugin(),
+          imagePlugin(),
+          codeBlockPlugin({ defaultCodeBlockLanguage: "" }),
+          codeMirrorPlugin({
+            codeBlockLanguages: {
+              css: "css",
+              txt: "txt",
+              sql: "sql",
+              json: "json",
+              html: "html",
+              js: "javascript",
+              ts: "typescript",
+              "": "unspecified",
+              jsx: "Javascript (React)",
+              tsx: "Typescript (React)",
+              python: "python",
+              java: "java",
+              csharp: "csharp",
+              cpp: "cpp",
+              go: "go",
+              sass: "sass",
+              scss: "scss",
+              less: "less",
+              bash: "bash",
+              php: "php",
+              ruby: "ruby",
+              rust: "rust",
+              kotlin: "kotlin",
+              swift: "swift",
+              yaml: "yaml",
+              xml: "xml",
+              markdown: "markdown",
+            },
+            autoLoadLanguageSupport: true,
+            codeMirrorExtensions: theme,
+          }),
+          diffSourcePlugin({ viewMode: "rich-text", diffMarkdown: "" }),
+          toolbarPlugin({
+            toolbarContents: () => (
+              <ConditionalContents
+                options={[
+                  {
+                    when: (editor) => editor?.editorType === "codeblock",
+                    contents: () => <ChangeCodeMirrorLanguage />,
+                  },
+                  {
+                    fallback: () => (
+                      <>
+                        <UndoRedo />
+                        <Separator />
 
-                      <BoldItalicUnderlineToggles />
-                      <Separator />
+                        <BoldItalicUnderlineToggles />
+                        <Separator />
 
-                      <ListsToggle />
-                      <Separator />
+                        <ListsToggle />
+                        <Separator />
 
-                      <CreateLink />
-                      <InsertImage />
-                      <Separator />
+                        <CreateLink />
+                        <InsertImage />
+                        <Separator />
 
-                      <InsertTable />
-                      <InsertThematicBreak />
-                      <Separator />
+                        <InsertTable />
+                        <InsertThematicBreak />
+                        <Separator />
 
-                      <InsertCodeBlock />
-                      <Separator />
-                    </>
-                  ),
-                },
-              ]}
-            />
-          ),
-        }),
-      ]}
-      {...props}
-    />
-  );
-};
+                        <InsertCodeBlock />
+                        <Separator />
+                      </>
+                    ),
+                  },
+                ]}
+              />
+            ),
+          }),
+        ]}
+        {...props}
+      />
+    );
+  }
+);
 
 export default Editor;

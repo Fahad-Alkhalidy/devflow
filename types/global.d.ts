@@ -1,6 +1,4 @@
-import { NextResponse } from "next/server";
-
-interface IQuestion {
+interface Question {
   _id: string;
   title: string;
   content: string;
@@ -28,20 +26,21 @@ type ActionResponse<T = null> = {
   data?: T;
   error?: {
     message: string;
-    detail?: Record<string, string[]>;
+    details?: Record<string, string[]>;
   };
   status?: number;
 };
+
+type SuccessResponse<T = null> = ActionResponse<T> & { success: true };
+type ErrorResponse = ActionResponse<undefined> & { success: false };
+
+type APIErrorResponse = NextResponse<ErrorResponse>;
+type APIResponse<T = null> = NextResponse<SuccessResponse<T> | ErrorResponse>;
 
 interface RouteParams {
   params: Promise<Record<string, string>>;
   searchParams: Promise<Record<string, string>>;
 }
-
-type SuccessResponse<T = null> = ActionRespons<T> & { success: true };
-type ErrorResponse = ActionResponse<undefined> & { success: false };
-type APIErrorResponse = NextResponse<ErrorResponse>;
-type APIResponse<T = null> = NextResponse<SuccessResponse<T> | ErrorResponse>;
 
 interface PaginatedSearchParams {
   page?: number;
@@ -51,7 +50,7 @@ interface PaginatedSearchParams {
   sort?: string;
 }
 
-interface IAnswer {
+interface Answer {
   _id: string;
   author: Author;
   content: string;

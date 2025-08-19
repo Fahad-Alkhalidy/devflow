@@ -24,7 +24,6 @@ import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import Routes from "@/constants/routes";
 import { ReloadIcon } from "@radix-ui/react-icons";
-import { ActionResponse, IQuestion } from "@/types/global";
 import { IQuestionDocument } from "@/database/question.model";
 // This is the only place InitializedMDXEditor is imported directly.
 const Editor = dynamic(() => import("@/components/editor"), {
@@ -33,7 +32,7 @@ const Editor = dynamic(() => import("@/components/editor"), {
 });
 
 interface Params {
-  question?: IQuestion;
+  question?: Question;
   isEdit?: boolean;
 }
 

@@ -5,7 +5,6 @@ import LocalSearch from "@/components/search/LocalSearch";
 import ROUTES from "@/constants/routes";
 import { EMPTY_QUESTION } from "@/constants/states";
 import { getTagQuestions } from "@/lib/actions/tag.action";
-import { RouteParams } from "@/types/global";
 import { Button } from "@mdxeditor/editor";
 import { Link } from "lucide-react";
 import React from "react";

@@ -5,7 +5,6 @@ import UserAvatar from "@/components/UserAvatar";
 import ROUTES from "@/constants/routes";
 import { getQuestion, incrementViews } from "@/lib/actions/question.action";
 import { formatNumber, getTimeStamp } from "@/lib/utils";
-import { RouteParams, Tag } from "@/types/global";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { title } from "process";
@@ -115,7 +114,11 @@ const QuestionDetails = async ({ params }: RouteParams) => {
       </section>
 
       <section className="my-5">
-        <AnswerForm questionId={question._id} />
+        <AnswerForm
+          questionId={question._id}
+          questionTitle={question.title}
+          questionContent={question.content}
+        />
       </section>
     </>
   );

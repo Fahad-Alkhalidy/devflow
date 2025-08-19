@@ -4,10 +4,9 @@ import ROUTES from "@/constants/routes";
 import { getTimeStamp } from "@/lib/utils";
 
 import UserAvatar from "../UserAvatar";
-import { IAnswer } from "@/types/global";
 import { Preview } from "../editor/preview";
 
-const AnswerCard = ({ _id, author, content, createdAt }: IAnswer) => {
+const AnswerCard = ({ _id, author, content, createdAt }: Answer) => {
   return (
     <article className="light-border border-b py-10">
       <span id={JSON.stringify(_id)} className="hash-span" />

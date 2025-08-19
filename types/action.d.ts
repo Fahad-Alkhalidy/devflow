@@ -1,5 +1,3 @@
-import { PaginatedSearchParams } from "./global";
-
 interface SignInWithOAuthParams {
   provider: "github" | "google";
   providerAccountId: string;

@@ -6,18 +6,10 @@ import {
   PaginatedSearchParamsSchema,
 } from "../validations";
 import { Question, Tag } from "@/database";
-import {
-  ActionResponse,
-  ErrorResponse,
-  PaginatedSearchParams,
-  Tag as ITag,
-  IQuestion,
-} from "@/types/global";
-import { GetTagQuestionsParams } from "@/types/action";
 
 export const getTags = async (
   params: PaginatedSearchParams
-): Promise<ActionResponse<{ tags: ITag[]; isNext: boolean }>> => {
+): Promise<ActionResponse<{ tags: Tag[]; isNext: boolean }>> => {
   const validationResult = await action({
     params,
     schema: PaginatedSearchParamsSchema,
@@ -83,7 +75,7 @@ export const getTags = async (
 export const getTagQuestions = async (
   params: GetTagQuestionsParams
 ): Promise<
-  ActionResponse<{ tag: ITag; questions: IQuestion[]; isNext: boolean }>
+  ActionResponse<{ tag: Tag; questions: Question[]; isNext: boolean }>
 > => {
   const validationResult = await action({
     params,

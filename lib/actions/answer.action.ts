@@ -10,8 +10,6 @@ import Answer, { IAnswerDocument } from "@/database/answer.model";
 import action from "../handlers/action";
 import handleError from "../handlers/error";
 import { AnswerServerSchema, GetAnswersSchema } from "../validations";
-import { ActionResponse, ErrorResponse, IAnswer } from "@/types/global";
-import { CreateAnswerParams, GetAnswersParams } from "@/types/action";
 
 export async function createAnswer(
   params: CreateAnswerParams
@@ -71,7 +69,7 @@ export async function createAnswer(
 
 export async function getAnswers(params: GetAnswersParams): Promise<
   ActionResponse<{
-    answers: IAnswer[];
+    answers: Answer[];
     isNext: boolean;
     totalAnswers: number;
   }>

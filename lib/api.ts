@@ -1,10 +1,8 @@
+import ROUTES from "@/constants/routes";
 import { IAccount } from "@/database/account.model";
 import { IUser } from "@/database/user.model";
 
 import { fetchHandler } from "./handlers/fetch";
-import Routes from "@/constants/routes";
-import { SignInWithOAuthParams } from "@/types/action";
-import { APIResponse } from "@/types/global";
 
 const API_BASE_URL =
   process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:3000/api";
@@ -15,12 +13,11 @@ export const api = {
       user,
       provider,
       providerAccountId,
-    }: SignInWithOAuthParams) => {
-      return fetchHandler(`${API_BASE_URL}/auth/${Routes.SIGN_IN_WITH_OAUTH}`, {
+    }: SignInWithOAuthParams) =>
+      fetchHandler(`${API_BASE_URL}/auth/${ROUTES.SIGN_IN_WITH_OAUTH}`, {
         method: "POST",
         body: JSON.stringify({ user, provider, providerAccountId }),
-      });
-    },
+      }),
   },
   users: {
     getAll: () => fetchHandler(`${API_BASE_URL}/users`),
@@ -69,6 +66,6 @@ export const api = {
       fetchHandler(`${API_BASE_URL}/ai/answers`, {
         method: "POST",
         body: JSON.stringify({ question, content }),
-      }) as unknown as APIResponse<string>,
+      }),
   },
 };

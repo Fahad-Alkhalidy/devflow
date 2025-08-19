@@ -6,10 +6,9 @@ import { getTimeStamp } from "@/lib/utils";
 
 import TagCard from "./TagCard";
 import Metric from "../Metric";
-import { IQuestion, Tag } from "@/types/global";
 
 interface Props {
-  question: IQuestion;
+  question: Question;
 }
 
 const QuestionCard = ({

@@ -23,7 +23,6 @@ import {
 import { Input } from "@/components/ui/input";
 import Link from "next/link";
 import Routes from "@/constants/routes";
-import { ActionResponse } from "@/types/global";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 

@@ -1,10 +1,9 @@
 import { EMPTY_ANSWERS } from "@/constants/states";
 
 import DataRenderer from "../DataRenderer";
-import { ActionResponse, IAnswer } from "@/types/global";
 import AnswerCard from "../cards/AnswerCard";
 
-interface Props extends ActionResponse<IAnswer[]> {
+interface Props extends ActionResponse<Answer[]> {
   totalAnswers: number;
 }
 

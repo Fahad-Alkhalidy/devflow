@@ -1,7 +1,6 @@
 import handleError from "@/lib/handlers/error";
 import { ValidationError } from "@/lib/http-errors";
 import { AIAnswerSchema } from "@/lib/validations";
-import { APIErrorResponse } from "@/types/global";
 import { groq } from "@ai-sdk/groq";
 import { generateText } from "ai";
 import { NextResponse } from "next/server";
@@ -25,7 +24,12 @@ export async function POST(req: Request) {
             (e.g., 'js' for JavaScript, 'py' for Python, 'ts' for TypeScript, 'html' for HTML,
              'css' for CSS, etc.).`,
     });
-    return NextResponse.json({ success: true, data: text }, { status: 200 });
+    return NextResponse.json(
+      { success: true, data: text },
+      {
+        status: 200,
+      }
+    );
   } catch (error) {
     return handleError(error, "api") as APIErrorResponse;
   }
