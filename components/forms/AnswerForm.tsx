@@ -96,15 +96,20 @@ const AnswerForm = ({ questionId, questionTitle, questionContent }: Props) => {
 
     setIsAISubmitting(true);
 
+    const userAnswer = editorRef.current?.getMarkdown();
     try {
       const { success, data, error } = await api.ai.getAnswer(
         questionTitle,
-        questionContent
+        questionContent,
+        userAnswer
       );
 
       if (!success) {
         return toast.error("Failed to generate an answer", {
-          description: "Groq failed to generate an answer.",
+          description:
+            error instanceof Error
+              ? error.message
+              : "Groq failed to generate an answer.",
           style: {
             backgroundColor: "#f8d7da",
             color: "#721c24",

@@ -16,7 +16,6 @@ import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import { MDXEditorMethods } from "@mdxeditor/editor";
 import dynamic from "next/dynamic";
-import { fi } from "zod/v4/locales";
 import { z } from "zod";
 import TagCard from "../cards/TagCard";
 import { createQuestion, editQuestion } from "@/lib/actions/question.action";
@@ -24,7 +23,6 @@ import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import Routes from "@/constants/routes";
 import { ReloadIcon } from "@radix-ui/react-icons";
-import { IQuestionDocument } from "@/database/question.model";
 // This is the only place InitializedMDXEditor is imported directly.
 const Editor = dynamic(() => import("@/components/editor"), {
   // Make sure we turn SSR off
@@ -180,7 +178,7 @@ const QuestionForm = ({ question, isEdit = false }: Params) => {
               </FormLabel>
               <FormControl>
                 <Editor
-                  editorRef={editorRef}
+                  ref={editorRef}
                   value={field.value}
                   fieldChange={field.onChange}
                 />
