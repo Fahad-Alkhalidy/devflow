@@ -13,7 +13,7 @@ import { getAnswers } from "@/lib/actions/answer.action";
 import { getQuestion, incrementViews } from "@/lib/actions/question.action";
 import { hasVoted } from "@/lib/actions/vote.action";
 import { formatNumber, getTimeStamp } from "@/lib/utils";
-import Votes from "@/components/Votes";
+import Votes from "@/components/votes/Votes";
 import { Preview } from "@/components/editor/preview";
 
 const QuestionDetails = async ({ params }: RouteParams) => {
