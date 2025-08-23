@@ -31,6 +31,7 @@ export async function updateVoteCount(
 
   const Model = targetType === "question" ? Question : Answer;
   const voteField = voteType === "upvote" ? "upvotes" : "downvotes";
+
   try {
     const result = await Model.findByIdAndUpdate(
       targetId,
@@ -65,7 +66,7 @@ export async function createVote(
   const { targetId, targetType, voteType } = validationResult.params!;
   const userId = validationResult.session?.user?.id;
 
-  if (!userId) handleError(new Error("Unauthorized")) as ErrorResponse;
+  if (!userId) return handleError(new Error("Unauthorized")) as ErrorResponse;
 
   const session = await mongoose.startSession();
   session.startTransaction();
@@ -76,6 +77,7 @@ export async function createVote(
       actionId: targetId,
       actionType: targetType,
     }).session(session);
+
     if (existingVote) {
       if (existingVote.voteType === voteType) {
         // If the user has already voted with the same voteType, remove the vote
@@ -90,6 +92,11 @@ export async function createVote(
           existingVote._id,
           { voteType },
           { new: true, session }
+        );
+        //existingVote.voteType !== voteType;
+        await updateVoteCount(
+          { targetId, targetType, voteType: existingVote.voteType, change: -1 },
+          session
         );
         await updateVoteCount(
           { targetId, targetType, voteType, change: 1 },
