@@ -1,7 +1,9 @@
 "use server";
 
 import mongoose, { ClientSession } from "mongoose";
+import { revalidatePath } from "next/cache";
 
+import ROUTES from "@/constants/routes";
 import { Answer, Question, Vote } from "@/database";
 
 import action from "../handlers/action";
@@ -29,7 +31,6 @@ export async function updateVoteCount(
 
   const Model = targetType === "question" ? Question : Answer;
   const voteField = voteType === "upvote" ? "upvotes" : "downvotes";
-
   try {
     const result = await Model.findByIdAndUpdate(
       targetId,
@@ -75,7 +76,6 @@ export async function createVote(
       actionId: targetId,
       actionType: targetType,
     }).session(session);
-
     if (existingVote) {
       if (existingVote.voteType === voteType) {
         // If the user has already voted with the same voteType, remove the vote
@@ -98,9 +98,19 @@ export async function createVote(
       }
     } else {
       // If the user has not voted yet, create a new vote
-      await Vote.create([{ targetId, targetType, voteType, change: 1 }], {
-        session,
-      });
+      await Vote.create(
+        [
+          {
+            author: userId,
+            actionId: targetId,
+            actionType: targetType,
+            voteType,
+          },
+        ],
+        {
+          session,
+        }
+      );
       await updateVoteCount(
         { targetId, targetType, voteType, change: 1 },
         session
@@ -109,6 +119,8 @@ export async function createVote(
 
     await session.commitTransaction();
     session.endSession();
+
+    revalidatePath(ROUTES.QUESTION(targetId));
 
     return { success: true };
   } catch (error) {
