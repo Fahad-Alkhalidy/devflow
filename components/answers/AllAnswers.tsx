@@ -8,6 +8,7 @@ interface Props extends ActionResponse<Answer[]> {
 }
 
 const AllAnswers = ({ data, success, error, totalAnswers }: Props) => {
+  console.log(data);
   return (
     <div className="mt-11">
       <div className="flex items-center justify-between">

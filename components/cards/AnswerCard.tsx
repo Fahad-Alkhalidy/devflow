@@ -21,7 +21,6 @@ const AnswerCard = ({
     targetId: _id,
     targetType: "answer",
   });
-
   return (
     <article className="light-border border-b py-10">
       <span id={JSON.stringify(_id)} className="hash-span" />

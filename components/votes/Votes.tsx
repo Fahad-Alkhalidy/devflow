@@ -69,7 +69,6 @@ const Votes = ({
       setIsLoading(false);
     }
   };
-
   return (
     <div className="flex-center gap-2.5">
       <div className="flex-center gap-1.5">

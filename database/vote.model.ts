@@ -17,7 +17,7 @@ const VoteSchema = new Schema<IVote>(
       refPath: "type", // Dynamically reference Question or Answer based on type
       required: true,
     },
-    actionType: { type: String, enum: ["question", "qnswer"], required: true },
+    actionType: { type: String, enum: ["question", "answer"], required: true },
     voteType: { type: String, enum: ["upvote", "downvote"], required: true },
   },
   { timestamps: true }
