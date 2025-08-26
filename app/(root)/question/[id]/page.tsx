@@ -17,9 +17,11 @@ import Votes from "@/components/votes/Votes";
 import { Preview } from "@/components/editor/preview";
 import SaveQuestion from "@/components/questions/SaveQuestions";
 import { hasSavedQuestion } from "@/lib/actions/collection.action";
+import { filter } from "@mdxeditor/editor";
 
-const QuestionDetails = async ({ params }: RouteParams) => {
+const QuestionDetails = async ({ params, searchParams }: RouteParams) => {
   const { id } = await params;
+  const { page, pageSize, filter } = await searchParams;
   const { success, data: question } = await getQuestion({ questionId: id });
 
   after(async () => {
@@ -34,9 +36,9 @@ const QuestionDetails = async ({ params }: RouteParams) => {
     error: answersError,
   } = await getAnswers({
     questionId: id,
-    page: 1,
-    pageSize: 10,
-    filter: "latest",
+    page: Number(page) || 1,
+    pageSize: Number(pageSize) || 10,
+    filter,
   });
 
   const hasVotedPromise = hasVoted({
