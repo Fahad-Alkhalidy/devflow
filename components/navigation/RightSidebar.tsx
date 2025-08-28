@@ -8,12 +8,10 @@ import DataRenderer from "../DataRenderer";
 import { getTopTags } from "@/lib/actions/tag.action";
 
 const RightSidebar = async () => {
-  const { success, data: hotQuestions, error } = await getHotQuestions();
-  const {
-    success: tagSuccess,
-    data: tags,
-    error: tagError,
-  } = await getTopTags();
+  const [
+    { success, data: hotQuestions, error },
+    { success: tagSuccess, data: tags, error: tagError },
+  ] = await Promise.all([getHotQuestions(), getTopTags()]);
 
   return (
     <section className="pt-36 custom-scrollbar background-light900_dark200 light-border sticky right-0 top-0 flex h-screen w-[350px] flex-col gap-6 overflow-y-auto border-l p-6 shadow-light-300 dark:shadow-none max-xl:hidden">
@@ -30,16 +28,27 @@ const RightSidebar = async () => {
           error={error}
           render={(hotQuestions) => (
             <div className="mt-7 flex w-full flex-col gap-[30px]">
-              {hotQuestions.map(({ _id, title }) => (
+              {hotQuestions.map(({ _id, title }, idx) => (
                 <Link
                   key={_id}
                   href={ROUTES.QUESTION(_id)}
                   className="flex cursor-pointer items-center justify-between gap-7"
                 >
-                  <p className="body-medium text-dark500_light700 line-clamp-2">
-                    {title}
-                  </p>
-
+                  <div className="flex items-center gap-2">
+                    <Image
+                      src={
+                        idx % 2 === 0
+                          ? "/icons/blue-question-mark.svg"
+                          : "/icons/orange-question-mark.svg"
+                      }
+                      alt="Question Mark"
+                      width={20}
+                      height={20}
+                    />
+                    <p className="body-medium text-dark500_light700 line-clamp-2">
+                      {title}
+                    </p>
+                  </div>
                   <Image
                     src="/icons/chevron-right.svg"
                     alt="Chevron"
