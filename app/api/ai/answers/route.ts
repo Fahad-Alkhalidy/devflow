@@ -15,7 +15,8 @@ export async function POST(req: Request) {
     if (!parsedData.success)
       throw new ValidationError(parsedData.error.flatten().fieldErrors);
     const { text } = await generateText({
-      model: groq("llama3-8b-8192"),
+      //model: groq("llama3-8b-8192"), old deprecated yesterday 30/8/2025
+      model: groq("llama-3.1-8b-instant"), //new version
       prompt: `Generate a markdown-formatted response to the following question: "${question}".  
       
       Consider the provided context:  
