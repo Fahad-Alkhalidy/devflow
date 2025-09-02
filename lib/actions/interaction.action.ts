@@ -116,3 +116,44 @@ async function updateReputation(params: UpdateReputationParams) {
     { session }
   );
 }
+
+/*
+async function getRecommendedQuestions(userId: string) {
+  // Step 1: Get all interactions related to questions
+  const interactions = await Interaction.find({
+    user: userId,
+    actionType: "question",
+    action: { $in: ["post", "upvote", "bookmark", "view"] },
+  }).lean();
+
+  // Step 2: Extract all question IDs from those interactions
+  const interactedQuestionIds = interactions.map((i) => i.actionId);
+
+  // Step 3: Get all tags from those questions
+  const questions = await mongoose
+    .model("Question")
+    .find(
+      {
+        _id: { $in: interactedQuestionIds },
+      },
+      "tags"
+    )
+    .lean();
+
+  // Step 4: Combine tags and remove duplicates
+  const uniqueTags = [...new Set(questions.flatMap((q: any) => q.tags))];
+
+  // Step 5: Search for other questions with those tags, not interacted with or created by user
+  const recommendedQuestions = await mongoose
+    .model("Question")
+    .find({
+      tags: { $in: uniqueTags },
+      _id: { $nin: interactedQuestionIds },
+      author: { $ne: userId },
+    })
+    .lean();
+
+  return recommendedQuestions;
+}
+
+*/

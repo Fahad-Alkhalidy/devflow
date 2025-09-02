@@ -8,9 +8,9 @@ import { Router } from "next/router";
 
 const filters = [
   { name: "Newest", value: "newest" },
-  { name: "Popular", value: "Popular" },
-  { name: "Unanswered", value: "Unanswered" },
-  { name: "Recommended", value: "mostRecommended" },
+  { name: "Popular", value: "popular" },
+  { name: "Unanswered", value: "unanswered" },
+  { name: "Recommended", value: "recommended" },
 ];
 
 const HomeFilter = () => {

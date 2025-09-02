@@ -162,8 +162,8 @@ export async function getUserStats(params: GetUserParams): Promise<
     return {
       success: true,
       data: {
-        totalQuestions: questionStats.count,
-        totalAnswers: answerStats.count,
+        totalQuestions: questionStats?.count ?? 0,
+        totalAnswers: answerStats?.count ?? 0,
         badges,
       },
     };
