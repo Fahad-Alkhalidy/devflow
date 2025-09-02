@@ -5,6 +5,7 @@ import {
   getUser,
   getUserQuestions,
   getUsersAnswers,
+  getUserStats,
   getUserTopTags,
 } from "@/lib/actions/user.action";
 import { notFound } from "next/navigation";
@@ -41,7 +42,9 @@ const Profile = async ({ params, searchParams }: RouteParams) => {
       </div>
     );
 
-  const { user, totalQuestions, totalAnswers } = data!;
+  const { user } = data!;
+
+  const { data: userStats } = await getUserStats({ userId: id });
 
   const {
     success: userQuestionsSuccess,
@@ -133,13 +136,9 @@ const Profile = async ({ params, searchParams }: RouteParams) => {
       </section>
 
       <Stats
-        totalQuestions={totalQuestions}
-        totalAnswers={totalAnswers}
-        badges={{
-          GOLD: 0,
-          SILVER: 0,
-          BRONZE: 0,
-        }}
+        totalQuestions={userStats?.totalQuestions || 0}
+        totalAnswers={userStats?.totalAnswers || 0}
+        badges={userStats?.badges || { GOLD: 0, SILVER: 0, BRONZE: 0 }}
         reputationPoints={user.reputation || 0}
       />
 
