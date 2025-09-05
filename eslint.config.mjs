@@ -20,6 +20,8 @@ export default [
     "prettier"
   ),
   {
+    ignorePatterns: ["components/ui/**"],
+
     rules: {
       "no-undef": "off",
     },
@@ -31,6 +33,5 @@ export default [
         },
       },
     ],
-    ignorePatterns: ["components/ui/**"],
   },
 ];
