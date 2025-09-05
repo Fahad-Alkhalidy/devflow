@@ -1,7 +1,5 @@
 //import { auth } from "@/auth";
-import { auth } from "@/auth";
 import QuestionCard from "@/components/cards/QuestionCard";
-import QuesionCard from "@/components/cards/QuestionCard";
 import DataRenderer from "@/components/DataRenderer";
 import CommonFilter from "@/components/filters/CommonFilter";
 import HomeFilter from "@/components/filters/HomeFilter";
@@ -12,9 +10,6 @@ import { HomePageFilters } from "@/constants/filters";
 import Routes from "@/constants/routes";
 import { EMPTY_QUESTION } from "@/constants/states";
 import { getQuestions } from "@/lib/actions/question.action";
-import handleError from "@/lib/handlers/error";
-import dbConnect from "@/lib/mongoose";
-import { get } from "http";
 import Link from "next/link";
 import React from "react";
 

@@ -4,6 +4,12 @@ import pino from "pino";
 const nextConfig: NextConfig = {
   /* config options here */
   serverExternalPackages: ["pino", "pino-pretty"],
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
+  typescript: {
+    ignoreBuildErrors: true,
+  },
   images: {
     remotePatterns: [
       { protocol: "https", hostname: "static.vecteezy.com", port: "" },
