@@ -4,7 +4,6 @@ import { Button } from "../ui/button";
 import { useRouter, useSearchParams } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { formUrlQuery, removeKeysFromUrlQuery } from "@/lib/url";
-import { Router } from "next/router";
 
 const filters = [
   { name: "Newest", value: "newest" },
