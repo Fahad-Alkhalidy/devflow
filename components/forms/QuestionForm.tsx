@@ -23,7 +23,6 @@ import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import Routes from "@/constants/routes";
 import { ReloadIcon } from "@radix-ui/react-icons";
-import { IQuestion } from "@/types/global";
 // This is the only place InitializedMDXEditor is imported directly.
 const Editor = dynamic(() => import("@/components/editor"), {
   // Make sure we turn SSR off
@@ -31,7 +30,7 @@ const Editor = dynamic(() => import("@/components/editor"), {
 });
 
 interface Params {
-  question?: IQuestion;
+  question?: Question;
   isEdit?: boolean;
 }
 

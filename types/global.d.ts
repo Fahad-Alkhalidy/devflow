@@ -78,7 +78,7 @@ interface User {
 interface Collection {
   _id: string;
   author: string | Author;
-  question: IQuestion;
+  question: Question;
 }
 
 interface BadgeCounts {
