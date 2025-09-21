@@ -1,4 +1,4 @@
-interface Question {
+export interface IQuestion {
   _id: string;
   title: string;
   content: string;
@@ -11,40 +11,40 @@ interface Question {
   views: number;
 }
 
-interface Tag {
+export interface Tag {
   _id: string;
   name: string;
   questions?: number;
 }
 
-interface Author {
+export interface Author {
   _id: string;
   name: string;
   image: string;
 }
 
-type ActionResponse<T = null> = {
+export type ActionResponse<T = null> = {
   success: boolean;
   data?: T;
   error?: {
     message: string;
-    details?: Record<string, string[]>;
+    detail?: Record<string, string[]>;
   };
   status?: number;
 };
 
-type SuccessResponse<T = null> = ActionResponse<T> & { success: true };
-type ErrorResponse = ActionResponse<undefined> & { success: false };
+export type SuccessResponse<T = null> = ActionResponse<T> & { success: true };
+export type ErrorResponse = ActionResponse<undefined> & { success: false };
 
-type APIErrorResponse = NextResponse<ErrorResponse>;
-type APIResponse<T = null> = NextResponse<SuccessResponse<T> | ErrorResponse>;
+export type APIErrorResponse = NextResponse<ErrorResponse>;
+export type APIResponse<T = null> = NextResponse<SuccessResponse<T> | ErrorResponse>;
 
-interface RouteParams {
+export interface RouteParams {
   params: Promise<Record<string, string>>;
   searchParams: Promise<Record<string, string>>;
 }
 
-interface PaginatedSearchParams {
+export interface PaginatedSearchParams {
   page?: number;
   pageSize?: number;
   query?: string;
@@ -52,7 +52,7 @@ interface PaginatedSearchParams {
   sort?: string;
 }
 
-interface Answer {
+export interface Answer {
   _id: string;
   author: Author;
   content: string;
@@ -62,25 +62,7 @@ interface Answer {
   question: string;
 }
 
-interface User {
-  _id: string;
-  name: string;
-  username: string;
-  email: string;
-  bio?: string;
-  image?: string;
-  location?: string;
-  portfolio?: string;
-  reputation?: number;
-}
-
-interface Collection {
-  _id: string;
-  author: string | Author;
-  question: Question;
-}
-
-interface User {
+export interface User {
   _id: string;
   name: string;
   username: string;
@@ -91,6 +73,12 @@ interface User {
   portfolio?: string;
   reputation?: number;
   createdAt: Date;
+}
+
+export interface Collection {
+  _id: string;
+  author: string | Author;
+  question: IQuestion;
 }
 
 interface BadgeCounts {
