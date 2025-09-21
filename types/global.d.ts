@@ -1,4 +1,4 @@
-export interface IQuestion {
+interface Question {
   _id: string;
   title: string;
   content: string;
@@ -11,19 +11,19 @@ export interface IQuestion {
   views: number;
 }
 
-export interface Tag {
+interface Tag {
   _id: string;
   name: string;
   questions?: number;
 }
 
-export interface Author {
+interface Author {
   _id: string;
   name: string;
   image: string;
 }
 
-export type ActionResponse<T = null> = {
+type ActionResponse<T = null> = {
   success: boolean;
   data?: T;
   error?: {
@@ -33,18 +33,18 @@ export type ActionResponse<T = null> = {
   status?: number;
 };
 
-export type SuccessResponse<T = null> = ActionResponse<T> & { success: true };
-export type ErrorResponse = ActionResponse<undefined> & { success: false };
+type SuccessResponse<T = null> = ActionResponse<T> & { success: true };
+type ErrorResponse = ActionResponse<undefined> & { success: false };
 
-export type APIErrorResponse = NextResponse<ErrorResponse>;
-export type APIResponse<T = null> = NextResponse<SuccessResponse<T> | ErrorResponse>;
+type APIErrorResponse = NextResponse<ErrorResponse>;
+type APIResponse<T = null> = NextResponse<SuccessResponse<T> | ErrorResponse>;
 
-export interface RouteParams {
+interface RouteParams {
   params: Promise<Record<string, string>>;
   searchParams: Promise<Record<string, string>>;
 }
 
-export interface PaginatedSearchParams {
+interface PaginatedSearchParams {
   page?: number;
   pageSize?: number;
   query?: string;
@@ -52,7 +52,7 @@ export interface PaginatedSearchParams {
   sort?: string;
 }
 
-export interface Answer {
+interface Answer {
   _id: string;
   author: Author;
   content: string;
@@ -62,7 +62,7 @@ export interface Answer {
   question: string;
 }
 
-export interface User {
+interface User {
   _id: string;
   name: string;
   username: string;
@@ -75,7 +75,7 @@ export interface User {
   createdAt: Date;
 }
 
-export interface Collection {
+interface Collection {
   _id: string;
   author: string | Author;
   question: IQuestion;
