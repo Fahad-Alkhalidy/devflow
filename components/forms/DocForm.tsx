@@ -22,7 +22,6 @@ import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import Routes from "@/constants/routes";
 import { ReloadIcon } from "@radix-ui/react-icons";
-import { Doc } from "@/types/global";
 
 // This is the only place InitializedMDXEditor is imported directly.
 const Editor = dynamic(() => import("@/components/editor"), {
@@ -40,9 +39,7 @@ const DocForm = ({ doc, isEdit = false }: Params) => {
   const [isPending, startTransition] = useTransition();
   const editorRef = useRef<MDXEditorMethods>(null);
 
-  const handleCreateDoc = async (
-    data: z.infer<typeof CreateDocSchema>
-  ) => {
+  const handleCreateDoc = async (data: z.infer<typeof CreateDocSchema>) => {
     startTransition(async () => {
       if (isEdit && doc) {
         const result = await editDoc({
@@ -58,8 +55,7 @@ const DocForm = ({ doc, isEdit = false }: Params) => {
               border: "1px solid #c3e6cb",
             },
           });
-          if (result.data)
-            router.push(Routes.DOC(result.data._id as string));
+          if (result.data) router.push(Routes.DOC(result.data._id as string));
         } else {
           console.log(result);
           toast.error("Failed To Update The Document!", {
@@ -99,7 +95,7 @@ const DocForm = ({ doc, isEdit = false }: Params) => {
   };
 
   const form = useForm<z.infer<typeof CreateDocSchema>>({
-    resolver: zodResolver(CreateDocSchema),
+    resolver: zodResolver(CreateDocSchema as any),
     defaultValues: {
       title: doc?.title || "",
       content: doc?.content || "",
@@ -153,7 +149,8 @@ const DocForm = ({ doc, isEdit = false }: Params) => {
                 />
               </FormControl>
               <FormDescription className="body-regular text-light-500 mt-2.5">
-                Write detailed content for your document. Use markdown formatting for better presentation.
+                Write detailed content for your document. Use markdown
+                formatting for better presentation.
               </FormDescription>
               <FormMessage />
             </FormItem>
@@ -177,7 +174,10 @@ const DocForm = ({ doc, isEdit = false }: Params) => {
                     onChange={field.onChange}
                     className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded"
                   />
-                  <label htmlFor="isPublished" className="text-sm text-dark400_light800">
+                  <label
+                    htmlFor="isPublished"
+                    className="text-sm text-dark400_light800"
+                  >
                     Publish this document
                   </label>
                 </div>

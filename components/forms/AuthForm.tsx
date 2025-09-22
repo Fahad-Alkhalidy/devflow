@@ -41,7 +41,7 @@ const AuthForm = <T extends FieldValues>({
   const router = useRouter();
   // 1. Define your form.
   const form = useForm<z.infer<typeof schema>>({
-    resolver: zodResolver(schema),
+    resolver: zodResolver(schema as any),
     defaultValues: defaultValues as DefaultValues<T>,
   });
 

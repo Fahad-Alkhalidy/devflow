@@ -41,7 +41,7 @@ const AnswerForm = ({ questionId, questionTitle, questionContent }: Props) => {
   const editorRef = useRef<MDXEditorMethods>(null);
 
   const form = useForm<z.infer<typeof AnswerSchema>>({
-    resolver: zodResolver(AnswerSchema),
+    resolver: zodResolver(AnswerSchema as any),
     defaultValues: {
       content: "",
     },

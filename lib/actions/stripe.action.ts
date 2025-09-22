@@ -9,7 +9,7 @@ import { z } from "zod";
 
 // Initialize Stripe
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: "2024-12-18.acacia",
+  apiVersion: "2025-02-24.acacia",
 });
 
 // Validation schemas
@@ -70,17 +70,29 @@ export async function createCheckoutSession(
 
     // Create or retrieve Stripe customer
     let customer;
-    const existingCustomer = await stripe.customers.list({
-      email: validationResult.session?.user?.email,
-      limit: 1,
-    });
+    const userEmail = validationResult.session?.user?.email;
 
-    if (existingCustomer.data.length > 0) {
-      customer = existingCustomer.data[0];
+    if (userEmail) {
+      const existingCustomer = await stripe.customers.list({
+        email: userEmail,
+        limit: 1,
+      });
+
+      if (existingCustomer.data.length > 0) {
+        customer = existingCustomer.data[0];
+      } else {
+        customer = await stripe.customers.create({
+          email: userEmail,
+          name: validationResult.session?.user?.name || undefined,
+          metadata: {
+            userId: userId!,
+          },
+        });
+      }
     } else {
+      // If no email, create customer without email
       customer = await stripe.customers.create({
-        email: validationResult.session?.user?.email,
-        name: validationResult.session?.user?.name,
+        name: validationResult.session?.user?.name || undefined,
         metadata: {
           userId: userId!,
         },

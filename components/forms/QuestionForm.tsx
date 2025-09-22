@@ -130,7 +130,7 @@ const QuestionForm = ({ question, isEdit = false }: Params) => {
     }
   };
   const form = useForm<z.infer<typeof AskQuestionSchema>>({
-    resolver: zodResolver(AskQuestionSchema),
+    resolver: zodResolver(AskQuestionSchema as any),
     defaultValues: {
       title: question?.title || "",
       content: question?.content || "",

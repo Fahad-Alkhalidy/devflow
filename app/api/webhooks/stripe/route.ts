@@ -4,7 +4,7 @@ import { ProMembership } from "@/database";
 import dbConnect from "@/lib/mongoose";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: "2024-12-18.acacia",
+  apiVersion: "2025-02-24.acacia",
 });
 
 const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET!;
@@ -76,7 +76,9 @@ export async function POST(req: NextRequest) {
   }
 }
 
-async function handleCheckoutSessionCompleted(session: Stripe.Checkout.Session) {
+async function handleCheckoutSessionCompleted(
+  session: Stripe.Checkout.Session
+) {
   const userId = session.metadata?.userId;
   const planType = session.metadata?.planType;
 
@@ -113,7 +115,16 @@ async function handleCheckoutSessionCompleted(session: Stripe.Checkout.Session) 
 }
 
 async function handleSubscriptionCreated(subscription: Stripe.Subscription) {
-  const customer = await stripe.customers.retrieve(subscription.customer as string);
+  const customer = await stripe.customers.retrieve(
+    subscription.customer as string
+  );
+
+  // Check if customer is deleted
+  if (customer.deleted) {
+    console.error("Customer has been deleted");
+    return;
+  }
+
   const userId = customer.metadata?.userId;
 
   if (!userId) {
@@ -132,7 +143,10 @@ async function handleSubscriptionCreated(subscription: Stripe.Subscription) {
       currentPeriodStart: new Date(subscription.current_period_start * 1000),
       currentPeriodEnd: new Date(subscription.current_period_end * 1000),
       cancelAtPeriodEnd: subscription.cancel_at_period_end,
-      planType: subscription.items.data[0].price.recurring?.interval === "year" ? "yearly" : "monthly",
+      planType:
+        subscription.items.data[0].price.recurring?.interval === "year"
+          ? "yearly"
+          : "monthly",
       amount: subscription.items.data[0].price.unit_amount || 0,
       currency: subscription.currency,
     },

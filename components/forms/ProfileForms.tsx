@@ -33,7 +33,7 @@ const ProfileForm = ({ user }: Params) => {
   const [isPending, startTransition] = useTransition();
 
   const form = useForm<z.infer<typeof ProfileSchema>>({
-    resolver: zodResolver(ProfileSchema),
+    resolver: zodResolver(ProfileSchema as any),
     defaultValues: {
       name: user.name || "",
       username: user.username || "",
