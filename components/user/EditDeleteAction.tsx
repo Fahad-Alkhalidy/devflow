@@ -16,6 +16,7 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { deleteQuestion } from "@/lib/actions/question.action";
 import { deleteAnswer } from "@/lib/actions/answer.action";
+import { deleteDoc } from "@/lib/actions/doc.action";
 
 interface Props {
   type: string;
@@ -26,7 +27,11 @@ const EditDeleteAction = ({ type, itemId }: Props) => {
   const router = useRouter();
 
   const handleEdit = async () => {
-    router.push(`/question/${itemId}/edit`);
+    if (type === "Question") {
+      router.push(`/question/${itemId}/edit`);
+    } else if (type === "Doc") {
+      router.push(`/docs/${itemId}/edit`);
+    }
   };
 
   const handleDelete = async () => {
@@ -44,6 +49,13 @@ const EditDeleteAction = ({ type, itemId }: Props) => {
       toast.success("Answer deleted", {
         description: "Your answer has been deleted successfully.",
       });
+    } else if (type === "Doc") {
+      // Call API to delete document
+      await deleteDoc({ docId: itemId });
+
+      toast.success("Document deleted", {
+        description: "Your document has been deleted successfully.",
+      });
     }
   };
 
@@ -51,7 +63,7 @@ const EditDeleteAction = ({ type, itemId }: Props) => {
     <div
       className={`flex items-center justify-end gap-3 max-sm:w-full ${type === "Answer" && "gap-0 justify-center"}`}
     >
-      {type === "Question" && (
+      {(type === "Question" || type === "Doc") && (
         <Image
           src="/icons/edit.svg"
           alt="edit"
@@ -71,7 +83,7 @@ const EditDeleteAction = ({ type, itemId }: Props) => {
             <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
             <AlertDialogDescription>
               This action cannot be undone. This will permanently delete your{" "}
-              {type === "Question" ? "question" : "answer"} and remove it from
+              {type === "Question" ? "question" : type === "Answer" ? "answer" : "document"} and remove it from
               our servers.
             </AlertDialogDescription>
           </AlertDialogHeader>

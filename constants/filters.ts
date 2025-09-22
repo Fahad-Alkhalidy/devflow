@@ -32,9 +32,16 @@ export const UserFilters = [
   { name: "Popular", value: "popular" },
 ];
 
+export const DocFilters = [
+  { name: "Newest", value: "newest" },
+  { name: "Oldest", value: "oldest" },
+  { name: "Popular", value: "popular" },
+];
+
 export const GlobalSearchFilters = [
   { name: "Question", value: "question" },
   { name: "Answer", value: "answer" },
   { name: "User", value: "user" },
   { name: "Tag", value: "tag" },
+  { name: "Document", value: "doc" },
 ];

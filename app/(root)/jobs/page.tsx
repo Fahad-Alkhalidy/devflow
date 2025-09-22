@@ -1,6 +1,7 @@
 import JobCard from "@/components/cards/JobCard";
 import JobsFilter from "@/components/filters/JobFilter";
 import Pagination from "@/components/Pagination";
+import ProMembershipGuard from "@/components/pricing/ProMembershipGuard";
 import {
   fetchCountries,
   fetchJobs,
@@ -22,7 +23,7 @@ const Page = async ({ searchParams }: RouteParams) => {
   console.log(jobs);
 
   return (
-    <>
+    <ProMembershipGuard>
       <h1 className="h1-bold text-dark100_light900">Jobs</h1>
 
       <div className="flex">
@@ -45,7 +46,7 @@ const Page = async ({ searchParams }: RouteParams) => {
       {jobs?.length > 0 && (
         <Pagination page={parsedPage} isNext={jobs?.length === 10} />
       )}
-    </>
+    </ProMembershipGuard>
   );
 };
 

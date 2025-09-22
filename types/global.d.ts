@@ -114,6 +114,34 @@ interface Country {
 
 interface GlobalSearchedItem {
   id: string;
-  type: "question" | "answer" | "user" | "tag";
+  type: "question" | "answer" | "user" | "tag" | "doc";
   title: string;
+}
+
+interface Doc {
+  _id: string;
+  title: string;
+  content: string;
+  author: Author;
+  views: number;
+  isPublished: boolean;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+interface ProMembership {
+  _id: string;
+  user: string | Author;
+  stripeCustomerId: string;
+  stripeSubscriptionId?: string;
+  stripePriceId: string;
+  status: "active" | "canceled" | "past_due" | "unpaid" | "incomplete";
+  currentPeriodStart: Date;
+  currentPeriodEnd: Date;
+  cancelAtPeriodEnd: boolean;
+  planType: "monthly" | "yearly";
+  amount: number;
+  currency: string;
+  createdAt: Date;
+  updatedAt: Date;
 }

@@ -25,6 +25,11 @@ export const sidebarLinks = [
     label: "Tags",
   },
   {
+    imgURL: "/icons/computer.svg",
+    route: "/docs",
+    label: "Docs",
+  },
+  {
     imgURL: "/icons/user.svg",
     route: "/profile",
     label: "Profile",

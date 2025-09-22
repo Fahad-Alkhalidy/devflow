@@ -58,3 +58,17 @@ export const EMPTY_USERS = {
   title: "No Users Found",
   message: "You're ALONE. The only one here. More uses are coming soon!",
 };
+
+export const EMPTY_DOCS = {
+  title: "No Documents Found",
+  message: "The documentation library is empty. Create your first document to get started!",
+  button: {
+    text: "Create Document",
+    href: ROUTES.DOCS,
+  },
+};
+
+export const EMPTY_USER_DOCS = {
+  title: "No Documents Created",
+  message: "This user hasn't created any documents yet. Check back later for their documentation!",
+};

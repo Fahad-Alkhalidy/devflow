@@ -252,7 +252,11 @@ export const ProfileSchema = z.object({
   username: z
     .string()
     .min(3, { message: "username musn't be longer then 100 characters." }),
-  portfolio: z.string().url({ message: "Please provide valid URL" }),
+  portfolio: z
+    .string()
+    .url({ message: "Please provide a valid URL (e.g., https://example.com)" })
+    .optional()
+    .or(z.literal("")),
   location: z.string().min(3, { message: "Please provide proper location" }),
   bio: z.string().min(3, {
     message: "Bio must be at least 3 characters.",
@@ -269,9 +273,41 @@ export const UpdateUserSchema = z.object({
   username: z
     .string()
     .min(3, { message: "username musn't be longer then 100 characters." }),
-  portfolio: z.string().url({ message: "Please provide valid URL" }),
+  portfolio: z
+    .string()
+    .url({ message: "Please provide a valid URL (e.g., https://example.com)" })
+    .optional()
+    .or(z.literal("")),
   location: z.string().min(3, { message: "Please provide proper location" }),
   bio: z.string().min(3, {
     message: "Bio must be at least 3 characters.",
   }),
+});
+
+// Document validation schemas
+export const CreateDocSchema = z.object({
+  title: z
+    .string()
+    .min(5, { message: "Title must be at least 5 characters long." })
+    .max(200, { message: "Title cannot exceed 200 characters." }),
+  content: z
+    .string()
+    .min(50, { message: "Content must be at least 50 characters long." }),
+  isPublished: z.boolean().default(true),
+});
+
+export const EditDocSchema = CreateDocSchema.extend({
+  docId: z.string().min(1, { message: "Document ID is required." }),
+});
+
+export const GetDocSchema = z.object({
+  docId: z.string().min(1, { message: "Document ID is required." }),
+});
+
+export const DeleteDocSchema = z.object({
+  docId: z.string().min(1, { message: "Document ID is required." }),
+});
+
+export const IncrementDocViewsSchema = z.object({
+  docId: z.string().min(1, { message: "Document ID is required." }),
 });

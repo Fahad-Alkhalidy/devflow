@@ -78,14 +78,15 @@ export const metadata = {
     ],
   },
 
-  // Optional: Theme color for browser UI and mobile experience
-  themeColor: "#18181b",
-
   // Optional: Color for Microsoft tiles and pinned sites
   msapplication: {
     TileColor: "#ffffff",
     TileImage: "/mstile-150x150.png",
   },
+};
+
+export const viewport = {
+  themeColor: "#18181b",
 };
 
 const RootLayout = async ({ children }: { children: React.ReactNode }) => {

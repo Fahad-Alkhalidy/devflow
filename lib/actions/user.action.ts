@@ -2,7 +2,7 @@
 
 import { FilterQuery, PipelineStage, Types } from "mongoose";
 
-import { Answer, Question, User } from "@/database";
+import { Answer, Question, User, Doc } from "@/database";
 
 import action from "../handlers/action";
 import handleError from "../handlers/error";
@@ -113,6 +113,7 @@ export async function getUserStats(params: GetUserParams): Promise<
   ActionResponse<{
     totalQuestions: number;
     totalAnswers: number;
+    totalDocuments: number;
     badges: Badges;
   }>
 > {
@@ -151,15 +152,26 @@ export async function getUserStats(params: GetUserParams): Promise<
       },
     ]);
 
+    const [docStats] = await Doc.aggregate([
+      { $match: { author: new Types.ObjectId(userId) } },
+      {
+        $group: {
+          _id: null,
+          count: { $sum: 1 },
+          views: { $sum: "$views" },
+        },
+      },
+    ]);
+
     const badges = assignBadges({
       criteria: [
-        { type: "ANSWER_COUNT", count: answerStats.count },
-        { type: "QUESTION_COUNT", count: questionStats.count },
+        { type: "ANSWER_COUNT", count: answerStats?.count ?? 0 },
+        { type: "QUESTION_COUNT", count: questionStats?.count ?? 0 },
         {
           type: "QUESTION_UPVOTES",
-          count: questionStats.upvotes + answerStats.upvotes,
+          count: (questionStats?.upvotes ?? 0) + (answerStats?.upvotes ?? 0),
         },
-        { type: "TOTAL_VIEWS", count: questionStats.views },
+        { type: "TOTAL_VIEWS", count: (questionStats?.views ?? 0) + (docStats?.views ?? 0) },
       ],
     });
 
@@ -168,6 +180,7 @@ export async function getUserStats(params: GetUserParams): Promise<
       data: {
         totalQuestions: questionStats?.count ?? 0,
         totalAnswers: answerStats?.count ?? 0,
+        totalDocuments: docStats?.count ?? 0,
         badges,
       },
     };

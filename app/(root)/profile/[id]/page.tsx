@@ -8,6 +8,7 @@ import {
   getUserStats,
   getUserTopTags,
 } from "@/lib/actions/user.action";
+import { getUserDocs } from "@/lib/actions/doc.action";
 import { notFound } from "next/navigation";
 import dayjs from "dayjs";
 import { Button } from "@/components/ui/button";
@@ -16,11 +17,12 @@ import Stats from "@/components/user/Stats";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import page from "../../page";
 import DataRenderer from "@/components/DataRenderer";
-import { EMPTY_ANSWERS, EMPTY_QUESTION, EMPTY_TAGS } from "@/constants/states";
+import { EMPTY_ANSWERS, EMPTY_QUESTION, EMPTY_TAGS, EMPTY_USER_DOCS } from "@/constants/states";
 import QuestionCard from "@/components/cards/QuestionCard";
 import Pagination from "@/components/Pagination";
 import AnswerCard from "@/components/cards/AnswerCard";
 import TagCard from "@/components/cards/TagCard";
+import DocCard from "@/components/cards/DocCard";
 
 const Profile = async ({ params, searchParams }: RouteParams) => {
   // /12312313
@@ -74,9 +76,20 @@ const Profile = async ({ params, searchParams }: RouteParams) => {
     userId: id,
   });
 
+  const {
+    success: userDocsSuccess,
+    data: userDocs,
+    error: userDocsError,
+  } = await getUserDocs({
+    userId: id,
+    page: Number(page) || 1,
+    pageSize: Number(pageSize) || 10,
+  });
+
   const { questions, isNext: hasMoreQuestions } = userQuestions!;
   const { answers, isNext: hasMoreAnswers } = userAnswers!;
   const { tags } = userTopTags!;
+  const { docs, isNext: hasMoreDocs } = userDocs!;
 
   const { _id, name, image, portfolio, location, createdAt, username, bio } =
     user;
@@ -138,6 +151,7 @@ const Profile = async ({ params, searchParams }: RouteParams) => {
       <Stats
         totalQuestions={userStats?.totalQuestions || 0}
         totalAnswers={userStats?.totalAnswers || 0}
+        totalDocuments={userStats?.totalDocuments || 0}
         badges={userStats?.badges || { GOLD: 0, SILVER: 0, BRONZE: 0 }}
         reputationPoints={user.reputation || 0}
       />
@@ -150,6 +164,9 @@ const Profile = async ({ params, searchParams }: RouteParams) => {
             </TabsTrigger>
             <TabsTrigger value="answers" className="tab">
               Answers
+            </TabsTrigger>
+            <TabsTrigger value="documents" className="tab">
+              Documents
             </TabsTrigger>
           </TabsList>
           <TabsContent
@@ -204,6 +221,30 @@ const Profile = async ({ params, searchParams }: RouteParams) => {
             />
 
             <Pagination page={page} isNext={hasMoreAnswers || false} />
+          </TabsContent>
+
+          <TabsContent value="documents" className="flex w-full flex-col gap-6">
+            <DataRenderer
+              data={docs}
+              empty={EMPTY_USER_DOCS}
+              success={userDocsSuccess}
+              error={userDocsError}
+              render={(docs) => (
+                <div className="flex w-full flex-col gap-6">
+                  {docs.map((doc) => (
+                    <DocCard
+                      key={doc._id}
+                      doc={doc}
+                      showActionBtns={
+                        loggedInUser?.user?.id === doc.author._id
+                      }
+                    />
+                  ))}
+                </div>
+              )}
+            />
+
+            <Pagination page={page} isNext={hasMoreDocs || false} />
           </TabsContent>
         </Tabs>
 

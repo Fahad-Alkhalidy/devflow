@@ -7,6 +7,8 @@ import TagQuestion from "./tag-question";
 import Collection from "./collection.model";
 import Interaction from "./interaction.model";
 import Vote from "./vote.model";
+import Doc from "./doc.model";
+import ProMembership from "./pro-membership.model";
 
 //this file aims to export all the models from the database
 
@@ -20,4 +22,6 @@ export {
   Collection,
   Interaction,
   Vote,
+  Doc,
+  ProMembership,
 };

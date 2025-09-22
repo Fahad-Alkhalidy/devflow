@@ -139,3 +139,43 @@ interface UpdateUserParams {
   image?: string;
   password?: string;
 }
+
+// Document action parameter types
+interface CreateDocParams {
+  title: string;
+  content: string;
+  isPublished?: boolean;
+}
+
+interface EditDocParams {
+  docId: string;
+  title: string;
+  content: string;
+  isPublished?: boolean;
+}
+
+interface GetDocParams {
+  docId: string;
+}
+
+interface DeleteDocParams {
+  docId: string;
+}
+
+interface IncrementDocViewsParams {
+  docId: string;
+}
+
+interface GetUserDocsParams extends Omit<PaginatedSearchParams, "query" | "filter" | "sort"> {
+  userId: string;
+}
+
+// Stripe action parameter types
+interface CreateCheckoutSessionParams {
+  priceId: string;
+  planType: "monthly" | "yearly";
+}
+
+interface CreateCustomerPortalParams {
+  returnUrl: string;
+}
