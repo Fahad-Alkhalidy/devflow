@@ -22,6 +22,8 @@ import {
 import dbConnect from "../mongoose";
 import { createInteraction } from "./interaction.action";
 import { cache } from "react";
+import { deleteImagesFromBlob } from "../utils/blob";
+import { del } from "@vercel/blob";
 
 export async function createDoc(
   params: CreateDocParams
@@ -36,18 +38,21 @@ export async function createDoc(
     return handleError(validationResult) as ErrorResponse;
   }
 
-  const { title, content, isPublished } = validationResult.params!;
+  const { title, content, isPublished, images } = validationResult.params!;
   const userId = validationResult.session?.user?.id;
 
   try {
     await dbConnect();
 
-    const doc = await Doc.create({
+    const docData = {
       title,
       content,
       author: userId,
       isPublished,
-    });
+      images: images || [],
+    };
+
+    const doc = await Doc.create(docData);
 
     if (!doc) throw new Error("Failed to create the document");
 
@@ -80,7 +85,8 @@ export async function editDoc(
     return handleError(validationResult) as ErrorResponse;
   }
 
-  const { title, content, isPublished, docId } = validationResult.params!;
+  const { title, content, isPublished, images, docId } =
+    validationResult.params!;
   const userId = validationResult.session?.user?.id;
 
   try {
@@ -93,9 +99,29 @@ export async function editDoc(
       throw new Error("You are not authorized to edit this document");
     }
 
+    // Check if any images were removed and delete them from blob
+    const oldImages = doc.images || [];
+    const newImages = images || [];
+    const removedImages = oldImages.filter(
+      (img: string) => !newImages.includes(img)
+    );
+
+    if (removedImages.length > 0) {
+      console.log("Removing images from blob:", removedImages);
+      await deleteImagesFromBlob(removedImages);
+    }
+
     doc.title = title;
     doc.content = content;
     doc.isPublished = isPublished;
+    doc.images = newImages;
+
+    console.log("editDoc - Updating document with data:", {
+      title,
+      content,
+      isPublished,
+      images: newImages,
+    });
 
     await doc.save();
 
@@ -316,6 +342,13 @@ export async function deleteDoc(
 
     if (doc.author.toString() !== user?.id)
       throw new Error("You are not authorized to delete this document");
+
+    // Delete images from Vercel Blob if they exist
+    if (doc.images && doc.images.length > 0) {
+      console.log("Deleting images from blob:", doc.images);
+
+      await deleteImagesFromBlob(doc.images);
+    }
 
     await Doc.findByIdAndDelete(docId);
 

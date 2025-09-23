@@ -22,6 +22,7 @@ import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import Routes from "@/constants/routes";
 import { ReloadIcon } from "@radix-ui/react-icons";
+import ImageUpload from "./ImageUpload";
 
 // This is the only place InitializedMDXEditor is imported directly.
 const Editor = dynamic(() => import("@/components/editor"), {
@@ -100,6 +101,7 @@ const DocForm = ({ doc, isEdit = false }: Params) => {
       title: doc?.title || "",
       content: doc?.content || "",
       isPublished: doc?.isPublished ?? true,
+      images: doc?.images || [],
     },
   });
 
@@ -151,6 +153,33 @@ const DocForm = ({ doc, isEdit = false }: Params) => {
               <FormDescription className="body-regular text-light-500 mt-2.5">
                 Write detailed content for your document. Use markdown
                 formatting for better presentation.
+              </FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name={"images"}
+          render={({ field }) => (
+            <FormItem className="flex w-full flex-col">
+              <FormLabel className="paragraph-semibold text-dark400_light800">
+                Images
+              </FormLabel>
+              <FormControl>
+                <ImageUpload
+                  images={field.value || []}
+                  onImagesChange={(newImages) => {
+                    console.log("Form field onChange called with:", newImages);
+                    field.onChange(newImages);
+                  }}
+                  maxImages={5}
+                />
+              </FormControl>
+              <FormDescription className="body-regular text-light-500 mt-2.5">
+                Upload images to enhance your document. You can add up to 5
+                images.
               </FormDescription>
               <FormMessage />
             </FormItem>

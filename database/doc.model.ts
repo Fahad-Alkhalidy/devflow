@@ -6,6 +6,7 @@ export interface IDoc {
   authorId: Types.ObjectId; // Reference to User ID
   views: number;
   isPublished: boolean;
+  images?: string[]; // Array of image URLs
 }
 
 export interface IDocDocument extends IDoc, Document {}
@@ -33,6 +34,10 @@ const DocSchema = new Schema(
     isPublished: { 
       type: Boolean, 
       default: true 
+    },
+    images: {
+      type: [String],
+      default: []
     },
   },
   {

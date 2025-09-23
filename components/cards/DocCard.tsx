@@ -13,7 +13,7 @@ interface Props {
 }
 
 const DocCard = ({
-  doc: { _id, title, content, author, createdAt, views },
+  doc: { _id, title, content, author, createdAt, views, images },
   showActionBtns = false,
 }: Props) => {
   // Truncate content for preview
@@ -43,6 +43,24 @@ const DocCard = ({
           {truncatedContent}
         </p>
       </div>
+
+      {/* Show first image as preview if available */}
+      {images && images.length > 0 && (
+        <div className="mt-4">
+          <div className="relative w-full h-32 overflow-hidden rounded-lg">
+            <img
+              src={images[0]}
+              alt={`Preview of ${title}`}
+              className="w-full h-full object-cover"
+            />
+            {images.length > 1 && (
+              <div className="absolute top-2 right-2 bg-black bg-opacity-50 text-white text-xs px-2 py-1 rounded">
+                +{images.length - 1} more
+              </div>
+            )}
+          </div>
+        </div>
+      )}
 
       <div className="flex-between mt-6 w-full flex-wrap gap-3">
         <Metric

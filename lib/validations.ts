@@ -294,6 +294,7 @@ export const CreateDocSchema = z.object({
     .string()
     .min(50, { message: "Content must be at least 50 characters long." }),
   isPublished: z.boolean().default(true),
+  images: z.array(z.string().url()).optional().default([]),
 });
 
 export const EditDocSchema = CreateDocSchema.extend({

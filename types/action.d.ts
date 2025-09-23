@@ -145,6 +145,7 @@ interface CreateDocParams {
   title: string;
   content: string;
   isPublished?: boolean;
+  images?: string[];
 }
 
 interface EditDocParams {
@@ -152,6 +153,7 @@ interface EditDocParams {
   title: string;
   content: string;
   isPublished?: boolean;
+  images?: string[];
 }
 
 interface GetDocParams {
@@ -166,7 +168,8 @@ interface IncrementDocViewsParams {
   docId: string;
 }
 
-interface GetUserDocsParams extends Omit<PaginatedSearchParams, "query" | "filter" | "sort"> {
+interface GetUserDocsParams
+  extends Omit<PaginatedSearchParams, "query" | "filter" | "sort"> {
   userId: string;
 }
 

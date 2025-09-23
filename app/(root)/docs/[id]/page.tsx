@@ -49,7 +49,7 @@ const DocumentDetails = async ({ params }: RouteParams) => {
 
   if (!success || !doc) return redirect("/404");
 
-  const { author, createdAt, views, content, title, isPublished } = doc;
+  const { author, createdAt, views, content, title, isPublished, images } = doc;
 
   // Check if user is the author
   const isAuthor = session?.user?.id === author._id;
@@ -127,6 +127,26 @@ const DocumentDetails = async ({ params }: RouteParams) => {
           textStyles="small-regular text-dark400_light700"
         />
       </div>
+
+      {/* Display Images */}
+      {images && images.length > 0 && (
+        <div className="mb-8">
+          <h3 className="h3-bold text-dark200_light900 mb-4">Images</h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {images.map((imageUrl: string, index: number) => (
+              <div key={index} className="relative group">
+                <div className="aspect-video relative overflow-hidden rounded-lg border">
+                  <img
+                    src={imageUrl}
+                    alt={`Document image ${index + 1}`}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       <Preview content={content} />
     </>

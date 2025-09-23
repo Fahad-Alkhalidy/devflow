@@ -125,6 +125,7 @@ interface Doc {
   author: Author;
   views: number;
   isPublished: boolean;
+  images?: string[];
   createdAt: Date;
   updatedAt: Date;
 }

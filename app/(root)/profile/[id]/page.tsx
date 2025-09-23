@@ -9,7 +9,7 @@ import {
   getUserTopTags,
 } from "@/lib/actions/user.action";
 import { getUserDocs } from "@/lib/actions/doc.action";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import dayjs from "dayjs";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
@@ -17,12 +17,18 @@ import Stats from "@/components/user/Stats";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import page from "../../page";
 import DataRenderer from "@/components/DataRenderer";
-import { EMPTY_ANSWERS, EMPTY_QUESTION, EMPTY_TAGS, EMPTY_USER_DOCS } from "@/constants/states";
+import {
+  EMPTY_ANSWERS,
+  EMPTY_QUESTION,
+  EMPTY_TAGS,
+  EMPTY_USER_DOCS,
+} from "@/constants/states";
 import QuestionCard from "@/components/cards/QuestionCard";
 import Pagination from "@/components/Pagination";
 import AnswerCard from "@/components/cards/AnswerCard";
 import TagCard from "@/components/cards/TagCard";
 import DocCard from "@/components/cards/DocCard";
+import Routes from "@/constants/routes";
 
 const Profile = async ({ params, searchParams }: RouteParams) => {
   // /12312313
@@ -33,6 +39,7 @@ const Profile = async ({ params, searchParams }: RouteParams) => {
   if (!id) notFound();
 
   const loggedInUser = await auth();
+  if (!loggedInUser?.user?.id) redirect(Routes.SIGN_IN);
   const { success, data, error } = await getUser({
     userId: id,
   });
@@ -235,9 +242,7 @@ const Profile = async ({ params, searchParams }: RouteParams) => {
                     <DocCard
                       key={doc._id}
                       doc={doc}
-                      showActionBtns={
-                        loggedInUser?.user?.id === doc.author._id
-                      }
+                      showActionBtns={loggedInUser?.user?.id === doc.author._id}
                     />
                   ))}
                 </div>
